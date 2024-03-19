@@ -29,6 +29,7 @@ import Store from "./pages/Store/Store";
 //components
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
+import CloserPlaces from "./pages/Store/Distributors/CloserPlaces";
 
 function App() {
   const [user, setUser] = useState(undefined);
@@ -82,9 +83,9 @@ function App() {
             <Route path="/store/coffees" element={<CoffeeStore />} />
             <Route path="/store/broths" element={<BrothStore />} />
             <Route path="/store/frozenFoods" element={<FrozenFoodStore />} />
-
-            <Route path="/store/checkout" element={<Checkout />} />
             <Route path="/menu" element={<Menu />} />
+            <Route path="/store/checkout" element={<Checkout />} />
+            <Route path="/store/map" element={<CloserPlaces />} />
             <Route path="/store" element={<Store />} />
             <Route path="/store/pocket" element={<PocketStore />} />
           </Routes>
