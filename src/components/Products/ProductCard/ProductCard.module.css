@@ -71,6 +71,9 @@
 
   .name {
     font-weight: bolder;
+    text-transform: uppercase;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
   }
 
   .description {

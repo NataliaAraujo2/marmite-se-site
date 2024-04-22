@@ -62,7 +62,7 @@ function App() {
             <Route
               path="/register"
               element={
-                !user ? <Register /> : <Navigate to="/home" />
+                !user ? <Register /> : <Navigate to="/" />
               }
             />
 

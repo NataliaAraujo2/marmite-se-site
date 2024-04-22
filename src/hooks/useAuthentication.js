@@ -8,12 +8,16 @@ import {
 } from "firebase/auth";
 
 import { useState, useEffect } from "react";
+import { useInsertDocument } from "./useInsertDocuments";
 
 
 export const useAuthentication = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
-
+  //insert a document in users db
+  const { insertDocument } = useInsertDocument("users");
+  //const authUser
+  const authUser = "user"
   //cleanup
   //deal with memory leak
   const [cancelled, setCancelled] = useState(false);
@@ -43,6 +47,13 @@ export const useAuthentication = () => {
         displayName: data.displayName,
       });
 
+    
+      insertDocument({
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        authUser,
+      });
       setLoading(false);
 
       return user;

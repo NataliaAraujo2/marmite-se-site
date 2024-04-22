@@ -12,6 +12,7 @@ const BrothStore = () => {
       <div className={styles.productList}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((p) => (
           <div key={p}>
+            
             <ProductCard
               src={image}
               name="Nome do Produto"

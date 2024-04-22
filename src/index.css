@@ -2,8 +2,8 @@ body {
   background-color: white;
   padding: 0;
   margin: 0;
+  font-family: "Open Sans", sans-serif;
 }
-
 
 
 input::placeholder,
@@ -37,6 +37,10 @@ nav button {
 a:hover,
 nav button:hover {
   color: var(--pink);
+}
+
+li{
+  list-style: none;
 }
 
 

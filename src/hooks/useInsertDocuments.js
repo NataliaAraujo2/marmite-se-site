@@ -1,40 +1,65 @@
-import {storage} from '../firebase/config'
-import { ref, listAll, getDownloadURL, uploadBytes} from "firebase/storage"
-
-//Lê os arquivos do firestorage
-export const getAll = async () => {
-  const list = [];
-
-  const marmitasFolder = ref(storage, "marmitas");
-  const marmitasList = await listAll(marmitasFolder)
+import { useState, useEffect, useReducer } from "react";
+import { db } from "../firebase/config";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 
 
-for (let i in marmitasList.items) {
-  let imageUrl = await getDownloadURL(marmitasList.items[i])
-  list.push({
-    name: marmitasList.items[i].name,
-    url: imageUrl
-  })
-}
-
-  return list;
+const initialState = {
+  loading: null,
+  error: null,
 };
 
-//Envia arquivos para o firestorage para a posta marmitas
-
-export const insert = async (file, fileName) => {
-  if(['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-
-
-const newFile =ref(storage, `marmitas/${fileName}`)
-const upload = await uploadBytes(newFile, file)
-const imageUrl = await getDownloadURL(upload.ref)
-return {
-  name: upload.ref.name,
-  url:imageUrl
-}
-
-  } else {
-    return new Error("Tipo de arquivo não permitido")
+const insertReducer = (state, action) => {
+  switch (action.type) {
+    case "LOADING":
+      return { loading: true, error: null };
+    case "INSERTED_DOC":
+      return { loading: false, error: null };
+    case "ERROR":
+      return { loading: false, error: action.payload };
+    default:
+      return state;
   }
-}
+};
+
+export const useInsertDocument = (docCollection) => {
+  const [response, dispatch] = useReducer(insertReducer, initialState);
+
+  //deal with memory leak
+  const [cancelled, setCancelled] = useState(false);
+
+  const checkCancelBeforeDispatch = (action) => {
+    if (!cancelled) {
+      dispatch(action);
+    }
+  };
+
+
+  const insertDocument = async (document) => {
+    checkCancelBeforeDispatch({ type: "LOADING" });
+
+    try {
+      const newDocument = { ...document, createAt: Timestamp.now().toDate() };
+      const insertedDocument = await addDoc(
+        collection(db, docCollection),
+        newDocument
+      );
+
+      checkCancelBeforeDispatch({
+        type: "INSERTED_DOC",
+        payload: insertedDocument,
+      });
+    } catch (error) {
+      checkCancelBeforeDispatch({
+        type: "ERROR",
+        payload: error.message,
+      });
+      return;
+    }
+  };
+
+  useEffect(() => {
+    return () => setCancelled(true);
+  }, []);
+
+  return { insertDocument, response };
+};

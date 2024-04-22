@@ -15,13 +15,13 @@ const Distributors = () => {
         <b>Nome do Distribuidor</b>
         <div className={styles.infos}>
           <FaRegStar className={styles.star} />
-          <text>4,5</text>
+          <span>4,5</span>
           <FaDollarSign />
-          <text> $$$</text>
+          <span> $$$</span>
           <FaNfcDirectional />
-          <text> 2,8km</text>
+          <span> 2,8km</span>
         </div>
-        <labe>Frete Grátis</labe>
+        <span>Frete Grátis</span>
       </div>
     </li>
   );

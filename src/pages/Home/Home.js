@@ -1,51 +1,44 @@
+//services
 import React, { useState } from "react";
+import { useFetchDocuments } from "../../hooks/useFetchDocuments";
 //CSS
 import styles from "./Home.module.css";
+//components
 import ProductTypeCard from "../../components/ProductType/ProductTypeCard";
 import Modal from "../../components/Modal/Modal";
+//images
 import modalHome from "../../images/modalHome.jpg";
 
 const Home = () => {
   const [openModal, setOpenModal] = useState(true);
+  const { documents: branchs, loading } = useFetchDocuments("branchs");
 
   return (
     <div className={styles.home}>
-     <Modal isOpen={openModal} src={modalHome} setModalOpen={() => setOpenModal(!openModal)}/>
-
-      <ProductTypeCard
-        image="./logo.png"
-        Title="Marmitas"
-        subtitle="Apresentando Sabores Saudáveis: A Essência da Nutrição em Cada Mordida"
-        to="/productsType/pockets"
+      <Modal
+        isOpen={openModal}
+        src={modalHome}
+        setModalOpen={() => setOpenModal(!openModal)}
       />
 
-      <ProductTypeCard
-        image="./logo.png"
-        Title="Congelados"
-        subtitle="Descubra como a praticidade pode ser deliciosa "
-        to="/productsType/frozenFoods"
-      />
+      {loading && <p>Carregando...</p>}
+      {branchs && branchs.length === 0 && (
+        <div>
+          <p>Não foram encontrados serviços!</p>
+        </div>
+      )}
 
-      <ProductTypeCard
-        image="./logo.png"
-        Title="Coffee-Break"
-        subtitle="Elevando o Seu Evento com o Nosso Serviço de Coffee Break Empresarial "
-        to="/productsType/coffees"
-      />
+      {branchs &&
+        branchs.map((branch) => (
+          <ProductTypeCard
+            image={branch.url}
+            Title={branch.branchName}
+            feature={branch.features}
+            to={`/store/${branch.branchName}`}
+          />
+        ))}
 
-      <ProductTypeCard
-        image="./logo.png"
-        Title="Caldos"
-        subtitle="Aqueça o Momento com os Nossos Caldos e Sopas Especiais! "
-        to="/productsType/broths"
-      />
-
-      <ProductTypeCard
-        image="./logo.png"
-        Title="Sobremesas"
-        subtitle="Deleite-se com as Nossas Sobremesas Irresistíveis! "
-        to="/productsType/desserts"
-      />
+     
     </div>
   );
 };
