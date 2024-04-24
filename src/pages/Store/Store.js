@@ -20,7 +20,7 @@ const Store = () => {
         name="Nome do Produto"
         price="15,00"
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-   
+        condition={true}
       />
      </div>))}
        {[1, 2, 3, 4, 5].map((p) => (

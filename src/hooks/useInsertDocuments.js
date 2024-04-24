@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer } from "react";
 import { db } from "../firebase/config";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp, setDoc, doc } from "firebase/firestore";
 
 
 const initialState = {
@@ -57,9 +57,32 @@ export const useInsertDocument = (docCollection) => {
     }
   };
 
+  const insertCart = async (product, document) => {
+    checkCancelBeforeDispatch({ type: "LOADING" });
+
+    try {
+      const newDocument = { ...document, createAt: Timestamp.now().toDate() };
+      const insertedDocument = await setDoc(
+        doc(db, docCollection, product),
+        newDocument
+      );
+
+      checkCancelBeforeDispatch({
+        type: "INSERTED_DOC",
+        payload: insertedDocument,
+      });
+    } catch (error) {
+      checkCancelBeforeDispatch({
+        type: "ERROR",
+        payload: error.message,
+      });
+      return;
+    }
+  };
+
   useEffect(() => {
     return () => setCancelled(true);
   }, []);
 
-  return { insertDocument, response };
+  return { insertDocument, insertCart, response };
 };

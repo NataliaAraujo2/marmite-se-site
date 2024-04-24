@@ -2,55 +2,80 @@ import React, { useEffect, useState } from "react";
 import styles from "./Menu.module.css";
 import ProductCard from "../../components/Products/ProductCard/ProductCard";
 import { useFetchDocuments } from "../../hooks/useFetchDocuments";
+import { useAuthValue } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useInsertDocument } from "../../hooks/useInsertDocuments";
 
 const Menu = () => {
   const state = "ATIVO";
   const { documents: branchs } = useFetchDocuments("branchs", null, state);
   const { documents: products } = useFetchDocuments("products", null, state);
+  const [uid, setUid] = useState(null);
   const [existBranch, setExistBranch] = useState([]);
   const [existProduct, setExistProduct] = useState([]);
+  const { user } = useAuthValue();
+  const navigate = useNavigate();
+  const {insertCart} = useInsertDocument(`Cart ${uid}`)
 
   useEffect(() => {
-    if (branchs) {
-      const branchsNames = branchs.map(function (branch) {
-        return branch.branchName;
-      });
-
-      const sortBranchsNames = branchsNames.sort(Intl.Collator().compare);
-      setExistBranch(sortBranchsNames);
-    }
     function compare(a, b) {
-      if (a.productName < b.productName) return -1;
-      if (a.productName > b.productName) return 1;
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
       return 0;
     }
+
+    if (user) {
+      setUid(user.uid);
+    }
+
+    if (branchs) {
+      const sortBranchsName = branchs.sort(compare);
+      setExistBranch(sortBranchsName);
+    }
+
     if (products) {
       const sortProductsName = products.sort(compare);
       setExistProduct(sortProductsName);
     }
-  }, [branchs, products]);
+  }, [branchs, products, user]);
+
+  let Product;
+
+  const addToCart = (product) => {
+    if (uid !== null) {
+      Product = product
+      Product['qty'] = 1
+      Product['TotalProductPrice']=Product.qty*Product.price
+
+      
+      insertCart(product.id,{
+       Product
+      })
+      console.log("Sucess")
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <div className={styles.menu}>
       {existBranch &&
         existBranch.map((branch) => (
-          <div className={styles.products} key={branch}>
+          <div key={branch.id}>
             <div className={styles.tittle}>
-              <h3>{branch}</h3>
+              <h3>{branch.name}</h3>
             </div>
             <div className={styles.productsList}>
               {existProduct &&
                 existProduct.map((product) => (
-                  <>
-                    {product.branchName === branch && (
+                  <div key={product.id}>
+                    {product.branchName === branch.name && (
                       <ProductCard
-                        src={product.url}
-                        name={product.productName}
-                        price={product.price}
-                        description={product.description}
+                        individualProduct={product}
+                        addToCart={addToCart}
                       />
                     )}
-                  </>
+                  </div>
                 ))}
             </div>
           </div>

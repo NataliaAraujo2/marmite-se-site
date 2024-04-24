@@ -32,7 +32,7 @@ const Home = () => {
         branchs.map((branch) => (
           <ProductTypeCard
             image={branch.url}
-            Title={branch.branchName}
+            Title={branch.name}
             feature={branch.features}
             to={`/store/${branch.branchName}`}
           />
