@@ -54,6 +54,16 @@
 }
 
 
+.closeModal {
+  width: 50%;
+  display: block;
+  position: fixed;
+  top: 11%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
 
 @media screen and (max-width: 965px) {
   .faBars {

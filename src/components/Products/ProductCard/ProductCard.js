@@ -34,21 +34,14 @@ const ProductCard = ({ addToCart, individualProduct }) => {
       <div className={styles.image}>
         <img src={individualProduct.url} alt={individualProduct.name} />
       </div>
-      <span className={styles.name}>{individualProduct.name}</span>
+      <div className={styles.productDetails}>
+        <span className={styles.name}>{individualProduct.name}</span>
+        
+      </div>
       <label className={styles.description}>
         {individualProduct.description}
       </label>
-      <div className={styles.priceAdd}>
-        <div>
-          <span className={styles.price}>R${price}</span>
-        </div>
-
-        <div className={styles.add}>
-          <button onClick={handleAddToCart}>+</button>
-          <span>1</span>
-          <button className={styles.minus}>-</button>
-        </div>
-      </div>
+      <span className={styles.price}>R${price}</span>
       <button className={styles.addToCart} onClick={handleAddToCart}>
         Adicionar ao Carrinho
       </button>

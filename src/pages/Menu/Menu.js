@@ -15,7 +15,7 @@ const Menu = () => {
   const [existProduct, setExistProduct] = useState([]);
   const { user } = useAuthValue();
   const navigate = useNavigate();
-  const {insertCart} = useInsertDocument(`Cart ${uid}`)
+  const { insertCart } = useInsertDocument(`Cart ${uid}`);
 
   useEffect(() => {
     function compare(a, b) {
@@ -41,17 +41,21 @@ const Menu = () => {
 
   let Product;
 
+  const cartProductIncrease = (cartProduct) => {
+  
+    console.log(cartProduct);
+  };
+
   const addToCart = (product) => {
     if (uid !== null) {
-      Product = product
-      Product['qty'] = 1
-      Product['TotalProductPrice']=Product.qty*Product.price
+      Product = product;
+      Product["qty"] = 1;
+      Product["totalProductPrice"] = Product.qty * Product.price;
 
-      
-      insertCart(product.id,{
-       Product
-      })
-      console.log("Sucess")
+      insertCart(product.id, {
+        Product,
+      });
+      console.log("Sucess");
     } else {
       navigate("/login");
     }
@@ -73,6 +77,7 @@ const Menu = () => {
                       <ProductCard
                         individualProduct={product}
                         addToCart={addToCart}
+                        cartProductIncrease={cartProductIncrease}
                       />
                     )}
                   </div>

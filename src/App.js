@@ -30,6 +30,7 @@ import Store from "./pages/Store/Store";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import CloserPlaces from "./pages/Store/Distributors/CloserPlaces";
+import Resume from "./pages/Resume/Resume";
 
 function App() {
   const [user, setUser] = useState(undefined);
@@ -55,6 +56,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/resume/:id" element={<Resume />} />
             <Route
               path="/login"
               element={!user ? <Login /> : <Navigate to="/" />}

@@ -1,29 +1,48 @@
-import React, { useState } from "react";
 import styles from "./CartSidebar.module.css";
 import ProductList from "../Products/ProductList/ProductList";
-import imageDefault from "../../images/logo.png";
+
 import NavLinkButton from "../Button/NavLinkButton";
 import { FaSave } from "react-icons/fa";
+import { useAuthValue } from "../../context/AuthContext";
+import { useEffect, useState } from "react";
+import { useFetchDocuments } from "../../hooks/useFetchDocuments";
 
-const CartSidebar = ({ isOpen = false }) => {
-  const [image] = useState(imageDefault);
+const CartSidebar = ({ isOpen, onClick }) => {
+  //const services
+  const { user } = useAuthValue();
+
+  const [cancelled, setCancelled] = useState(false);
+  //const User
+  const [userUid, setUserUid] = useState("");
+  const [userName, setUserName] = useState("");
+  //constCart
+  const [cartProducts, setCartProducts] = useState([]);
+  const { documents } = useFetchDocuments(`Cart ${user.uid}`);
+
+  useEffect(() => {
+    if (user) {
+      setUserUid(user.uid);
+      setUserName(user.displayName);
+    }
+
+    if (documents) {
+      setCartProducts(documents);
+    }
+  }, [user, documents]);
+
+
   if (isOpen) {
     return (
       <div className={styles.background}>
         <div className={styles.modal}>
           <div className={styles.shoppingCart}>
-            <h3>Meu Carrinho</h3>
+            <h3>Carrinho de Compras</h3>
+
             <div className={styles.productsList}>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((p) => (
-                <div key={p}>
-                  <ProductList
-                    src={image}
-                    name="Nome do Produto"
-                    price="15,00"
-                    button={true}
-                  />
-                </div>
-              ))}
+              {cartProducts &&
+                cartProducts.map((cartProduct) => (
+                  <ProductList cartProduct={cartProduct} button={true}  key={cartProduct.id} />
+                ))}
             </div>
           </div>
           <div className={styles.total}>
@@ -31,7 +50,11 @@ const CartSidebar = ({ isOpen = false }) => {
             <span>R$ 15,00</span>
           </div>
           <div className={styles.button}>
-            <NavLinkButton Text="FINALIZAR COMPRA" Icon={FaSave}></NavLinkButton>
+            <NavLinkButton
+              onClick={onClick}
+              Text="FINALIZAR COMPRA"
+              Icon={FaSave}
+            ></NavLinkButton>
           </div>
         </div>
       </div>

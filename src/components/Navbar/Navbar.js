@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 //CSS
 import styles from "./Navbar.module.css";
 //Images
@@ -26,6 +26,7 @@ import { useAuthValue } from "../../context/AuthContext";
 import CartSidebar from "../CartSidebar/CartSidebar";
 
 const Navbar = () => {
+  const [cancelled, setCancelled] = useState(false)
   const [menuMobile, setMenuMobile] = useState(false);
   const showMenuMobile = () => setMenuMobile(!menuMobile);
   const [openModal, setOpenModal] = useState(false);
@@ -33,7 +34,17 @@ const Navbar = () => {
   const { user } = useAuthValue();
   const { logout } = useAuthentication();
 
-  console.log(openModal)
+  console.log(openModal);
+
+  useEffect(() => {
+    if(cancelled) return;
+    setOpenModal(false)
+  
+    return () => {
+      setCancelled(true)
+    }
+  }, [cancelled])
+  
 
   return (
     <div className={styles.navbar}>
@@ -80,8 +91,16 @@ const Navbar = () => {
                   onClick={() => setOpenModal(!openModal)}
                 />
               </li>
-              {openModal && <CartSidebar isOpen={openModal} />}
-
+              {openModal && (
+                <>
+                  <div >
+                    <div className={styles.closeModal} onClick={() => setOpenModal(false)}></div>
+                    <div>
+                      <CartSidebar isOpen={openModal} onClick={() => setOpenModal(false)}/>
+                    </div>
+                  </div>
+                </>
+              )}
               <li>
                 <NavLinkButton
                   onClick={logout}
