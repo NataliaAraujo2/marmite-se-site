@@ -39,8 +39,6 @@ const Menu = () => {
     }
   }, [branchs, products, user]);
 
-  let Product;
-
   const cartProductIncrease = (cartProduct) => {
   
     console.log(cartProduct);
@@ -48,12 +46,19 @@ const Menu = () => {
 
   const addToCart = (product) => {
     if (uid !== null) {
-      Product = product;
-      Product["qty"] = 1;
-      Product["totalProductPrice"] = Product.qty * Product.price;
+     
+     const qty = 1;
+     const total = qty * product.price;
+
+     
+
+      const totalProductPrice = total.toLocaleString('pt-br', {minimumFractionDigits: 2})
+
 
       insertCart(product.id, {
-        Product,
+        product,
+        qty,
+        totalProductPrice
       });
       console.log("Sucess");
     } else {
