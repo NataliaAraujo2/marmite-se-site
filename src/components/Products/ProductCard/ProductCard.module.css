@@ -89,6 +89,22 @@
    font-size: 0.8em;
   }
 
+  .accompanimentsDiv{
+    background-color: white;
+    border: 1px solid black;
+    height: 19em;
+    width: 20em;
+    font-size: 0.9em;
+    overflow-y: auto;
+  }
+
+  .accompaniments {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+  }
+
 
 @media screen and (max-width: 959px) {
   .productImage {

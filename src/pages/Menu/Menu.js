@@ -39,26 +39,21 @@ const Menu = () => {
     }
   }, [branchs, products, user]);
 
-  const cartProductIncrease = (cartProduct) => {
-  
-    console.log(cartProduct);
-  };
+
 
   const addToCart = (product) => {
     if (uid !== null) {
-     
-     const qty = 1;
-     const total = qty * product.price;
+      const qty = 1;
+      const total = qty * product.price;
 
-     
-
-      const totalProductPrice = total.toLocaleString('pt-br', {minimumFractionDigits: 2})
-
+      const totalProductPrice = total.toLocaleString("pt-br", {
+        minimumFractionDigits: 2,
+      });
 
       insertCart(product.id, {
         product,
         qty,
-        totalProductPrice
+        totalProductPrice,
       });
       console.log("Sucess");
     } else {
@@ -74,7 +69,7 @@ const Menu = () => {
             <div className={styles.tittle}>
               <h3>{branch.name}</h3>
             </div>
-            <div className={styles.productsList}>
+            <div className={  styles.productsList}>
               {existProduct &&
                 existProduct.map((product) => (
                   <div key={product.id}>
@@ -82,7 +77,6 @@ const Menu = () => {
                       <ProductCard
                         individualProduct={product}
                         addToCart={addToCart}
-                        cartProductIncrease={cartProductIncrease}
                       />
                     )}
                   </div>
@@ -90,7 +84,7 @@ const Menu = () => {
             </div>
           </div>
         ))}
-    </div>
+    </div>  
   );
 };
 
