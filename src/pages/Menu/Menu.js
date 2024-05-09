@@ -17,7 +17,6 @@ const Menu = () => {
   const navigate = useNavigate();
   const { insertCart } = useInsertDocument(`Cart ${uid}`);
   const [accompaniments, setAccompaniments] = useState([]);
-  const [id,setId] = useState("")
 
   useEffect(() => {
     function compare(a, b) {
