@@ -77,8 +77,7 @@ const ProductList = ({ cartProduct, button = null }) => {
           <span className={styles.name}>{cartProduct.product.name}</span>
           {accompaniments.length > 0 && (
             <span className={styles.accompaniments}>
-              Acompanhamentos: {cartProduct.accompaniments[0]},
-              {cartProduct.accompaniments[1]}, {cartProduct.accompaniments[2]}
+              Acompanhamentos: {cartProduct.accompaniments[0]},&nbsp;{cartProduct.accompaniments[1]},&nbsp;{cartProduct.accompaniments[2]}
             </span>
           )}
         </div>
