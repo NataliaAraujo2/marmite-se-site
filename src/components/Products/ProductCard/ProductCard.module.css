@@ -26,85 +26,103 @@
 }
 
 .priceAdd {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-top: 1em;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1em;
 }
 
-.price{
-    font-weight: bold;
+.price {
+  font-weight: bold;
 }
 
 .add {
-    display: flex;
-    flex-direction: row;
-    width: 20%;
-    justify-content: right;
-    align-items: center;
-    font-size: 1.2em;
-    font-weight: bold;
-  }
-  
-  .add button {
-    border: none;
-    font-size: 1em;
-    border-radius: 0;
-    margin: 0;
-    background-color: var(--blue);
-  }
-  
-  .add button:hover,
-  .add button:focus {
-    -webkit-transform: none;
-    -ms-transform: none;
-    transform: none;
-    color: var(--yellow);
-    font-size: 1.1em;
-  }
-  
-  .minus {
-    margin-top: 50%;
-    margin-left: 50%;
-    transform: translate(0%, -8%);
-  }
+  display: flex;
+  flex-direction: row;
+  width: 20%;
+  justify-content: right;
+  align-items: center;
+  font-size: 1.2em;
+  font-weight: bold;
+}
 
-  .name {
-    font-weight: bolder;
-    text-transform: uppercase;
-    margin-bottom: 0.5em;
-    margin-top: 0.5em;
-  }
+.add button {
+  border: none;
+  font-size: 1em;
+  border-radius: 0;
+  margin: 0;
+  background-color: var(--blue);
+}
 
-  .description {
-    text-align: justify;
-  }
+.add button:hover,
+.add button:focus {
+  -webkit-transform: none;
+  -ms-transform: none;
+  transform: none;
+  color: var(--yellow);
+  font-size: 1.1em;
+}
 
-  .addToCart{
-    text-transform: uppercase;
-    background-color: var(--green);
-    margin-top: 0.5em;
-   padding: 1em;
-   font-size: 0.8em;
-  }
+.minus {
+  margin-top: 50%;
+  margin-left: 50%;
+  transform: translate(0%, -8%);
+}
 
-  .accompanimentsDiv{
-    background-color: white;
-    border: 1px solid black;
-    height: 19em;
-    width: 20em;
-    font-size: 0.9em;
-    overflow-y: auto;
-  }
+.name {
+  font-weight: bolder;
+  text-transform: uppercase;
+  margin-bottom: 0.5em;
+  margin-top: 0.5em;
+}
 
-  .accompaniments {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: left;
-  }
+.description {
+  text-align: justify;
+}
 
+.addToCart {
+  text-transform: uppercase;
+  background-color: var(--green);
+  margin-top: 0.5em;
+  padding: 1em;
+  font-size: 0.8em;
+}
+
+.accompanimentsDiv {
+  background-color: white;
+  border: 1px solid black;
+  height: 100%;
+  width: 20em;
+  font-size: 0.9em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.accompanimentsBox {
+  font-size: 0.9em;
+  overflow-y: auto;
+}
+
+.accompaniments {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+}
+
+.accompanimentsDiv span {
+  margin: 0.5em;
+  font-weight: bolder;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.accompanimentsDiv button {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
 
 @media screen and (max-width: 959px) {
   .productImage {

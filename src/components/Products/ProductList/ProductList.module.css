@@ -29,9 +29,22 @@ align-items: center;
 justify-content: space-between;
 }
 
+.productDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.accompaniments{
+  text-align: justify;
+}
+
+
 .details .name {
   width: 70%;
+  font-weight: bolder;
 }
+
+
 
 .details .price {
   margin-right: 1em;

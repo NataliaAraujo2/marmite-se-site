@@ -2,21 +2,23 @@ import styles from "./ProductList.module.css";
 import React, { useEffect, useState } from "react";
 import { useUpdateDocument } from "../../../hooks/useUpdateDocument";
 import { useAuthValue } from "../../../context/AuthContext";
-import { useDeleteDocument } from "../../../hooks/useDeleteDocument"
+import { useDeleteDocument } from "../../../hooks/useDeleteDocument";
 
 const ProductList = ({ cartProduct, button = null }) => {
   const { user } = useAuthValue();
   const uid = user.uid;
   const { updateDocument } = useUpdateDocument(`Cart ${uid}`);
   const { deleteDocument } = useDeleteDocument(`Cart ${uid}`);
-  const [price, setPrice] = useState("")
-  const [cancelled, setCancelled] = useState(false)
+  const [price, setPrice] = useState("");
+  const [cancelled, setCancelled] = useState(false);
+  const [accompaniments, setAccompaniments] = useState([]);
 
   useEffect(() => {
     if (cancelled) return;
 
     if (cartProduct) {
-      setPrice(cartProduct.totalProductPrice)  
+      setPrice(cartProduct.totalProductPrice);
+      setAccompaniments(cartProduct.accompaniments);
     }
 
     return () => {
@@ -26,13 +28,13 @@ const ProductList = ({ cartProduct, button = null }) => {
     };
   }, [cartProduct, price, cancelled]);
 
-
-
   const handleCartProductIncrease = () => {
     const qty = parseInt(cartProduct.qty) + 1;
     const total = qty * cartProduct.product.price;
-    const totalProductPrice = total.toLocaleString('pt-br', {minimumFractionDigits: 2})
-    setPrice(totalProductPrice)
+    const totalProductPrice = total.toLocaleString("pt-br", {
+      minimumFractionDigits: 2,
+    });
+    setPrice(totalProductPrice);
 
     const data = {
       qty,
@@ -45,18 +47,20 @@ const ProductList = ({ cartProduct, button = null }) => {
   };
 
   const handleCartProductDecrease = () => {
- if(cartProduct.qty > 1) {
-  const qty = parseInt(cartProduct.qty) - 1;
-  const total = qty * cartProduct.product.price;
-  const totalProductPrice = total.toLocaleString('pt-br', {minimumFractionDigits: 2})
-  setPrice(totalProductPrice)
-  const data = {
-    qty,
-    totalProductPrice,
-  };
-  updateDocument(cartProduct.product.id, data);
-  console.log(totalProductPrice);
- }
+    if (cartProduct.qty > 1) {
+      const qty = parseInt(cartProduct.qty) - 1;
+      const total = qty * cartProduct.product.price;
+      const totalProductPrice = total.toLocaleString("pt-br", {
+        minimumFractionDigits: 2,
+      });
+      setPrice(totalProductPrice);
+      const data = {
+        qty,
+        totalProductPrice,
+      };
+      updateDocument(cartProduct.product.id, data);
+      console.log(totalProductPrice);
+    }
   };
 
   return (
@@ -66,7 +70,15 @@ const ProductList = ({ cartProduct, button = null }) => {
       </div>
 
       <div className={styles.details}>
-        <span className={styles.name}>{cartProduct.product.name}</span>
+        <div className={styles.productDetails}>
+          <span className={styles.name}>{cartProduct.product.name}</span>
+          {accompaniments.length > 0 && (
+            <span className={styles.accompaniments}>
+              Acompanhamentos: {cartProduct.accompaniments[0]},
+              {cartProduct.accompaniments[1]}, {cartProduct.accompaniments[2]}
+            </span>
+          )}
+        </div>
         <span className={styles.price}>R${cartProduct.totalProductPrice}</span>
       </div>
 
@@ -78,7 +90,9 @@ const ProductList = ({ cartProduct, button = null }) => {
             -
           </button>
           <div className={styles.delete}>
-            <button  onClick={() => deleteDocument(cartProduct.product.id)}>Excluir</button>
+            <button onClick={() => deleteDocument(cartProduct.product.id)}>
+              Excluir
+            </button>
           </div>
         </div>
       )}

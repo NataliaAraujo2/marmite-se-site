@@ -16,6 +16,7 @@ const Menu = () => {
   const { user } = useAuthValue();
   const navigate = useNavigate();
   const { insertCart } = useInsertDocument(`Cart ${uid}`);
+  const [accompaniments, setAccompaniments] = useState([]);
 
   useEffect(() => {
     function compare(a, b) {
@@ -39,9 +40,8 @@ const Menu = () => {
     }
   }, [branchs, products, user]);
 
-
-
   const addToCart = (product) => {
+
     if (uid !== null) {
       const qty = 1;
       const total = qty * product.price;
@@ -49,34 +49,45 @@ const Menu = () => {
       const totalProductPrice = total.toLocaleString("pt-br", {
         minimumFractionDigits: 2,
       });
-
-      insertCart(product.id, {
+      const id = `${product.id}.${accompaniments[0]}.${accompaniments[1]}.${accompaniments[2]}`
+      insertCart(id, {
         product,
         qty,
         totalProductPrice,
+        accompaniments,
       });
       console.log("Sucess");
     } else {
       navigate("/login");
     }
+    setAccompaniments([])
   };
+
+  const accompanimentsChoicedHandle = (accompanimentsChoiced) => {
+    setAccompaniments(accompanimentsChoiced);
+  };
+
+  console.log(accompaniments);
 
   return (
     <div className={styles.menu}>
+          {accompaniments}
       {existBranch &&
         existBranch.map((branch) => (
           <div key={branch.id}>
             <div className={styles.tittle}>
               <h3>{branch.name}</h3>
             </div>
-            <div className={  styles.productsList}>
+            <div className={styles.productsList}>
               {existProduct &&
                 existProduct.map((product) => (
                   <div key={product.id}>
+                
                     {product.branchName === branch.name && (
                       <ProductCard
                         individualProduct={product}
                         addToCart={addToCart}
+                        accompanimentsChoicedHandle={accompanimentsChoicedHandle}
                       />
                     )}
                   </div>
@@ -84,7 +95,7 @@ const Menu = () => {
             </div>
           </div>
         ))}
-    </div>  
+    </div>
   );
 };
 
