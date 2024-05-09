@@ -42,8 +42,9 @@ const ProductList = ({ cartProduct, button = null }) => {
     };
 
     console.log(totalProductPrice);
+    const id = `${cartProduct.product.id}.${accompaniments}`
 
-    updateDocument(cartProduct.product.id, data);
+    updateDocument(id, data);
   };
 
   const handleCartProductDecrease = () => {
@@ -58,7 +59,9 @@ const ProductList = ({ cartProduct, button = null }) => {
         qty,
         totalProductPrice,
       };
-      updateDocument(cartProduct.product.id, data);
+
+      const id = `${cartProduct.product.id}.${accompaniments}`
+      updateDocument(id, data);
       console.log(totalProductPrice);
     }
   };

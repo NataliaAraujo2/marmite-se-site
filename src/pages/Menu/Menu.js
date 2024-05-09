@@ -17,6 +17,7 @@ const Menu = () => {
   const navigate = useNavigate();
   const { insertCart } = useInsertDocument(`Cart ${uid}`);
   const [accompaniments, setAccompaniments] = useState([]);
+  const [id,setId] = useState("")
 
   useEffect(() => {
     function compare(a, b) {
@@ -49,7 +50,9 @@ const Menu = () => {
       const totalProductPrice = total.toLocaleString("pt-br", {
         minimumFractionDigits: 2,
       });
-      const id = `${product.id}.${accompaniments[0]}.${accompaniments[1]}.${accompaniments[2]}`
+
+     const id = `${product.id}.${accompaniments}`
+      
       insertCart(id, {
         product,
         qty,
