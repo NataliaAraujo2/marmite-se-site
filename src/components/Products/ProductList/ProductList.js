@@ -21,7 +21,6 @@ const ProductList = ({ cartProduct, button = null }) => {
   );
 
   const [existAccompaniments, setExistAccompaniments] = useState([]);
-  const { updateDocument } = useUpdateDocument(`Cart ${uid}`);
   const { deleteDocument } = useDeleteDocument(`${uid}`);
   const [accompaniments, setAccompaniments] = useState(false);
   const [qty, setQty] = useState(1);
@@ -47,47 +46,52 @@ const ProductList = ({ cartProduct, button = null }) => {
       return 0;
     }
 
-    if (accompanimentsList) {git 
+    if (accompanimentsList) {
       const sortAccompanimentsName = accompanimentsList.sort(compare);
       setExistAccompaniments(sortAccompanimentsName);
     }
   }, [accompanimentsList, cartProduct]);
 
   useEffect(() => {
-    const productCartInclude = existCart.includes(cartProduct.id)
-    if(cartProduct.product.accompaniments!=="SIM" && !productCartInclude) {
+    const productCartInclude = existCart.includes(cartProduct.id);
+    if (cartProduct.product.accompaniments !== "SIM" && !productCartInclude) {
+      const priceProduct = cartProduct.product.price;
       const id = `${cartProduct.id} `;
       insertCart(id, {
         cartProduct,
-        price,
-        qty
+        price: priceProduct,
+        qty,
       });
     }
-  
-    // return () => {
-    //   second
-    // }
-  }, [qty,price,cartProduct, existCart, insertCart])
-  
+  }, [qty, price, cartProduct, existCart, insertCart]);
 
-  const handleCartProductIncrease = () => {
-    const qtyProduct = qty + 1;
-    const productPrice = cartProduct.product.price;
-    const total = qtyProduct * productPrice;
-    const totalProductPrice = total.toLocaleString("pt-br", {
-      minimumFractionDigits: 2,
-    });
-    setQty(qtyProduct);
-    setPrice(totalProductPrice);
+  async function increase () {
+      const qtyProduct = qty + 1;
+      const productPrice = cartProduct.product.price;
+      const total = qtyProduct * productPrice;
+      const totalProductPrice = total.toLocaleString("pt-br", {
+        minimumFractionDigits: 2,
+      });
+     await setQty(qtyProduct);
+     await setPrice(totalProductPrice);
+  }
 
+  const handleCartProductIncrease = async () => {
     if (cartProduct.product.accompaniments === "SIM") {
+      increase()
       setAccompaniments(true);
-    } else {
+    }
+
+    const productCartInclude = existCart.includes(cartProduct.id);
+    if (cartProduct.product.accompaniments !== "SIM" && productCartInclude) {
+     increase()
+     const productQtyCartInclude = 1
+     const qytTotal = productQtyCartInclude+qty 
       const id = `${cartProduct.id} `;
       insertCart(id, {
         cartProduct,
         price,
-        qty
+        qty: qytTotal,
       });
     }
   };
