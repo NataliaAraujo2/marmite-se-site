@@ -6,17 +6,19 @@ import { useAuthValue } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useInsertDocument } from "../../hooks/useInsertDocuments";
 
+
 const Menu = () => {
   const state = "ATIVO";
   const { documents: branchs } = useFetchDocuments("branchs", null, state);
   const { documents: products } = useFetchDocuments("products", null, state);
+  
   const [uid, setUid] = useState(null);
   const [existBranch, setExistBranch] = useState([]);
   const [existProduct, setExistProduct] = useState([]);
   const { user } = useAuthValue();
+
   const navigate = useNavigate();
-  const { insertCart } = useInsertDocument(`Cart ${uid}`);
-  const [accompaniments, setAccompaniments] = useState([]);
+  const { insertCart } = useInsertDocument(`${uid}`);
 
   useEffect(() => {
     function compare(a, b) {
@@ -38,10 +40,13 @@ const Menu = () => {
       const sortProductsName = products.sort(compare);
       setExistProduct(sortProductsName);
     }
+
   }, [branchs, products, user]);
 
-  const addToCart = (product) => {
 
+
+
+  const addToCart = async(product) => {
     if (uid !== null) {
       const qty = 1;
       const total = qty * product.price;
@@ -50,30 +55,37 @@ const Menu = () => {
         minimumFractionDigits: 2,
       });
 
-     const id = `${product.id}.${accompaniments}`
+      const id = `${product.id}`;
       
       insertCart(id, {
+        uid,
         product,
         qty,
         totalProductPrice,
-        accompaniments,
       });
+
+      if(product.accompaniments !== "SIM"){
+        insertCart(id, {
+          uid,
+          product,
+          qty,
+          totalProductPrice,
+        });
+      }
+
       console.log("Sucess");
     } else {
       navigate("/login");
     }
-    setAccompaniments([])
+
+    console.log(document)
   };
 
-  const accompanimentsChoicedHandle = (accompanimentsChoiced) => {
-    setAccompaniments(accompanimentsChoiced);
-  };
-
-  console.log(accompaniments);
+  
 
   return (
     <div className={styles.menu}>
-          {accompaniments}
+  
       {existBranch &&
         existBranch.map((branch) => (
           <div key={branch.id}>
@@ -84,12 +96,11 @@ const Menu = () => {
               {existProduct &&
                 existProduct.map((product) => (
                   <div key={product.id}>
-                
                     {product.branchName === branch.name && (
                       <ProductCard
                         individualProduct={product}
                         addToCart={addToCart}
-                        accompanimentsChoicedHandle={accompanimentsChoicedHandle}
+                     
                       />
                     )}
                   </div>
@@ -97,6 +108,7 @@ const Menu = () => {
             </div>
           </div>
         ))}
+    
     </div>
   );
 };

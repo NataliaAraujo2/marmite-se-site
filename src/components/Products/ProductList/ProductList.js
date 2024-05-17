@@ -3,101 +3,236 @@ import React, { useEffect, useState } from "react";
 import { useUpdateDocument } from "../../../hooks/useUpdateDocument";
 import { useAuthValue } from "../../../context/AuthContext";
 import { useDeleteDocument } from "../../../hooks/useDeleteDocument";
+import { useInsertDocument } from "../../../hooks/useInsertDocuments";
+import Accompaniments from "../Accompaniments/Accompaniments";
+import { useFetchDocuments } from "../../../hooks/useFetchDocuments";
+import { FaMinus, FaPlus } from "react-icons/fa6";
 
 const ProductList = ({ cartProduct, button = null }) => {
   const { user } = useAuthValue();
   const uid = user.uid;
+  const branchName = "Acompanhamentos";
+  const { documents: cart } = useFetchDocuments(`Cart ${uid}`);
+  const { documents: accompanimentsList } = useFetchDocuments(
+    "products",
+    null,
+    null,
+    branchName
+  );
+
+  const [existAccompaniments, setExistAccompaniments] = useState([]);
   const { updateDocument } = useUpdateDocument(`Cart ${uid}`);
-  const { deleteDocument } = useDeleteDocument(`Cart ${uid}`);
+  const { deleteDocument } = useDeleteDocument(`${uid}`);
+  const [accompaniments, setAccompaniments] = useState(false);
+  const [qty, setQty] = useState(1);
   const [price, setPrice] = useState("");
-  const [cancelled, setCancelled] = useState(false);
-  const [accompaniments, setAccompaniments] = useState([]);
+  const { insertCart } = useInsertDocument(`Cart ${uid}`);
+  const [accompanimentQty, setAccompanimentQty] = useState([]);
+  const [id, setId] = useState("");
+  const existCart = [];
 
+  if (cart) {
+    cart.map((products) => existCart.push(products.cartProduct.id));
+  }
+
+  console.log(existCart);
   useEffect(() => {
-    if (cancelled) return;
-
     if (cartProduct) {
-      setPrice(cartProduct.totalProductPrice);
-      setAccompaniments(cartProduct.accompaniments);
+      setPrice(cartProduct.product.price);
+      setId(cartProduct.product.id);
+    }
+    function compare(a, b) {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
     }
 
-    return () => {
-      if (price) {
-        setCancelled(true);
-      }
-    };
-  }, [cartProduct, price, cancelled]);
+    if (accompanimentsList) {
+      const sortAccompanimentsName = accompanimentsList.sort(compare);
+      setExistAccompaniments(sortAccompanimentsName);
+    }
+  }, [accompanimentsList, cartProduct]);
 
   const handleCartProductIncrease = () => {
-    const qty = parseInt(cartProduct.qty) + 1;
-    const total = qty * cartProduct.product.price;
+    const qtyProduct = qty + 1;
+    const productPrice = cartProduct.product.price;
+    const total = qtyProduct * productPrice;
     const totalProductPrice = total.toLocaleString("pt-br", {
       minimumFractionDigits: 2,
     });
+    setQty(qtyProduct);
     setPrice(totalProductPrice);
 
-    const data = {
-      qty,
-      totalProductPrice,
-    };
-
-    console.log(totalProductPrice);
-    const id = `${cartProduct.product.id}.${accompaniments}`
-
-    updateDocument(id, data);
+    if (cartProduct.product.accompaniments === "SIM") {
+      setAccompaniments(true);
+    }
   };
 
   const handleCartProductDecrease = () => {
     if (cartProduct.qty > 1) {
-      const qty = parseInt(cartProduct.qty) - 1;
-      const total = qty * cartProduct.product.price;
+      const qtyProduct = qty + 1;
+      const productPrice = cartProduct.product.price;
+      const total = qtyProduct * productPrice;
       const totalProductPrice = total.toLocaleString("pt-br", {
         minimumFractionDigits: 2,
       });
       setPrice(totalProductPrice);
-      const data = {
-        qty,
-        totalProductPrice,
-      };
-
-      const id = `${cartProduct.product.id}.${accompaniments}`
-      updateDocument(id, data);
+      setQty(qtyProduct);
       console.log(totalProductPrice);
     }
   };
 
+  function handleChangeAccompaniments(event) {
+    const { value, checked } = event.target;
+
+    if (checked) {
+      setAccompanimentQty((pre) => [...pre, value]);
+    } else {
+      setAccompanimentQty((pre) => [
+        ...pre.filter((product) => product !== value),
+      ]);
+    }
+  }
+
+  const handleIncreaseQtyAccompaniments = (data) => {
+    if(accompanimentQty.length < 3) {
+      setAccompanimentQty((pre) => [...pre, data]);
+    }
+
+  };
+
+  const handleDecreaseQtyAccompaniments = (data) => {
+    const filterArray = accompanimentQty.filter(function (accompaniment) {
+      if (accompaniment === data) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    filterArray.pop();
+
+    const array = accompanimentQty.filter((product) => product !== data);
+    console.log(array);
+
+    setAccompanimentQty(array.concat(filterArray));
+  };
+
+  const handleProductAccompaniments = () => {
+    console.log(accompanimentQty);
+    function countItems(arr) {
+      const countMap = Object.create(null);
+
+      for (const element of accompanimentQty) {
+        // Basicamente, estamos dizendo: atribua à `countMap[element]` o valor
+        // atual (ou zero, caso não existir) somado ao número 1.
+        countMap[element] = (countMap[element] || 0) + 1;
+      }
+
+      return Object.entries(countMap).map(([value, count]) => ({
+        accompaniment: value,
+        qty: count,
+      }));
+    }
+
+    const accompaniment = countItems(accompanimentQty);
+
+    console.log(accompaniment);
+
+    const id = `${cartProduct.id}.${accompanimentQty} `;
+    insertCart(id, {
+      cartProduct,
+      price,
+      qty,
+      accompaniment,
+    });
+    setAccompaniments(false);
+    setAccompanimentQty([]);
+  };
+
   return (
-    <div className={styles.productImage}>
+    <div className={styles.productList}>
       <div className={styles.image}>
         <img src={cartProduct.product.url} alt={cartProduct.product.name} />
       </div>
+      <span className={styles.name}>{cartProduct.product.name}</span>
 
-      <div className={styles.details}>
-        <div className={styles.productDetails}>
-          <span className={styles.name}>{cartProduct.product.name}</span>
-          {accompaniments.length > 0 && (
-            <span className={styles.accompaniments}>
-              Acompanhamentos: {cartProduct.accompaniments[0]},&nbsp;{cartProduct.accompaniments[1]},&nbsp;{cartProduct.accompaniments[2]}
-            </span>
+      {cartProduct.product.accompaniments === "SIM" && (
+        <>
+          {button && (
+            <>
+              {!accompaniments && (
+                <>
+                  {existCart.includes(cartProduct.id) ? (
+                    <div className={styles.buttons}>
+                    <div className={styles.add}>
+                    <FaPlus onClick={handleCartProductIncrease} />
+                      <span>{qty}</span>
+                      <FaMinus onClick={handleCartProductDecrease} />
+                    </div>
+
+                      <div className={styles.delete}>
+                        <button onClick={() => deleteDocument(id)}>
+                          Excluir
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className={styles.price}>R${price}</span>
+                      <div className={styles.buttons}>
+                        <button onClick={() => setAccompaniments(true)}>
+                          Escolha 3 Acompanhamentos
+                        </button>
+                        <div>
+                          <button onClick={() => deleteDocument(id)}>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+
+              {accompaniments && (
+                <div className={styles.accompanimentsBox}>
+                  <div className={styles.navAccompaniments}>
+                    <span>Escolha 3 Acompanhamentos</span>
+                    <button onClick={handleProductAccompaniments}>OK</button>
+                  </div>
+
+                  <div className={styles.accompanimentsOverflow}>
+                    {existAccompaniments &&
+                      existAccompaniments.map((accompaniment) => (
+                        <div className={styles.accompanimentsList}>
+                          <Accompaniments
+                            accompaniments={accompaniment}
+                            handleChangeAccompaniments={
+                              handleChangeAccompaniments
+                            }
+                            handleIncreaseQtyAccompaniments={
+                              handleIncreaseQtyAccompaniments
+                            }
+                            handleDecreaseQtyAccompaniments={
+                              handleDecreaseQtyAccompaniments
+                            }
+                            disabled={
+                              !accompanimentQty.includes(accompaniment.name) &&
+                              accompanimentQty.length > 2
+                            }
+                          />
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
-        </div>
-        <span className={styles.price}>R${cartProduct.totalProductPrice}</span>
-      </div>
-
-      {button && (
-        <div className={styles.add}>
-          <button onClick={handleCartProductIncrease}>+</button>
-          <span>{cartProduct.qty}</span>
-          <button className={styles.minus} onClick={handleCartProductDecrease}>
-            -
-          </button>
-          <div className={styles.delete}>
-            <button onClick={() => deleteDocument(cartProduct.product.id)}>
-              Excluir
-            </button>
-          </div>
-        </div>
+        </>
       )}
+
+      <></>
     </div>
   );
 };

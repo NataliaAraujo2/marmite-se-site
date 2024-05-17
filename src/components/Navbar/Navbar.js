@@ -23,28 +23,30 @@ import { MdRestaurantMenu } from "react-icons/md";
 import { useAuthentication } from "../../hooks/useAuthentication";
 //context
 import { useAuthValue } from "../../context/AuthContext";
-import CartSidebar from "../CartSidebar/CartSidebar";
 
 const Navbar = () => {
-  const [cancelled, setCancelled] = useState(false)
+  const [cancelled, setCancelled] = useState(false);
   const [menuMobile, setMenuMobile] = useState(false);
   const showMenuMobile = () => setMenuMobile(!menuMobile);
   const [openModal, setOpenModal] = useState(false);
-
+  const [uid, setUid] = useState("");
   const { user } = useAuthValue();
   const { logout } = useAuthentication();
 
   console.log(openModal);
 
   useEffect(() => {
-    if(cancelled) return;
-    setOpenModal(false)
-  
-    return () => {
-      setCancelled(true)
+    if (user) {
+      setUid(user.uid);
     }
-  }, [cancelled])
-  
+
+    if (cancelled) return;
+    setOpenModal(false);
+
+    return () => {
+      setCancelled(true);
+    };
+  }, [cancelled]);
 
   return (
     <div className={styles.navbar}>
@@ -88,19 +90,9 @@ const Navbar = () => {
                 <NavLinkButton
                   Icon={FaShoppingCart}
                   Text="Carrinho"
-                  onClick={() => setOpenModal(!openModal)}
+                  to={`/cart/Cart ${uid}`}
                 />
               </li>
-              {openModal && (
-                <>
-                  <div >
-                    <div className={styles.closeModal} onClick={() => setOpenModal(false)}></div>
-                    <div>
-                      <CartSidebar isOpen={openModal} onClick={() => setOpenModal(false)}/>
-                    </div>
-                  </div>
-                </>
-              )}
               <li>
                 <NavLinkButton
                   onClick={logout}

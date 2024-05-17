@@ -26,11 +26,13 @@ import FrozenFoodStore from "./pages/Store/FrozenFoodStore";
 import Checkout from "./pages/Checkout/Checkout";
 import Menu from "./pages/Menu/Menu";
 import Store from "./pages/Store/Store";
+import CloserPlaces from "./pages/Store/Distributors/CloserPlaces";
+import Resume from "./pages/Resume/Resume";
+import Cart from "./pages/Cart/Cart"
 //components
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
-import CloserPlaces from "./pages/Store/Distributors/CloserPlaces";
-import Resume from "./pages/Resume/Resume";
+
 
 function App() {
   const [user, setUser] = useState(undefined);
@@ -66,6 +68,12 @@ function App() {
               path="/register"
               element={
                 !user ? <Register /> : <Navigate to="/" />
+              }
+            />
+                <Route
+              path="/cart/:id"
+              element={
+                user ? <Cart /> : <Navigate to="/login" />
               }
             />
 

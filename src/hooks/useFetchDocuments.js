@@ -2,7 +2,7 @@ import { collection, onSnapshot, orderBy, query, where } from "firebase/firestor
 import { db } from "../firebase/config";
 import { useEffect, useState } from "react";
 
-export const useFetchDocuments = (docCollection, uid = null, state=null) => {
+export const useFetchDocuments = (docCollection, uid = null, state=null, branchName=null, product=null) => {
   const [documents, setDocuments] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
@@ -30,6 +30,18 @@ export const useFetchDocuments = (docCollection, uid = null, state=null) => {
           q = await query(
             collectionRef,
             where("state", "==", state),
+            orderBy("createAt", "desc")
+          );
+        } else if(branchName){
+          q = await query(
+            collectionRef,
+            where("branchName", "==", branchName),
+            orderBy("createAt", "desc")
+          );
+        }else if(product) {
+            q = await query(
+            collectionRef,
+            where("id", "==", product),
             orderBy("createAt", "desc")
           );
         } else {

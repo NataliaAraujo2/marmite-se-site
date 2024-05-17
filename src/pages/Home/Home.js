@@ -1,5 +1,5 @@
 //services
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFetchDocuments } from "../../hooks/useFetchDocuments";
 //CSS
 import styles from "./Home.module.css";
@@ -11,7 +11,27 @@ import modalHome from "../../images/modalHome.jpg";
 
 const Home = () => {
   const [openModal, setOpenModal] = useState(true);
-  const { documents: branchs, loading } = useFetchDocuments("branchs");
+  const state = "ATIVO";
+  const { documents: branchs, loading } = useFetchDocuments("branchs", null, state);
+  const [existBranch, setExistBranch] = useState([])
+
+  useEffect(() => {
+    function compare(a, b) {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
+    }
+
+    if (branchs) {
+      const sortBranchsName = branchs.sort(compare);
+      setExistBranch(sortBranchsName);
+    }
+
+  }, [branchs]);
+  
+   
+
+  
 
   return (
     <div className={styles.home}>
@@ -22,14 +42,14 @@ const Home = () => {
       />
 
       {loading && <p>Carregando...</p>}
-      {branchs && branchs.length === 0 && (
+      {existBranch && existBranch.length === 0 && (
         <div>
           <p>Não foram encontrados serviços!</p>
         </div>
       )}
 
-      {branchs &&
-        branchs.map((branch) => (
+      {existBranch &&
+        existBranch.map((branch) => (
           <ProductTypeCard
             image={branch.url}
             Title={branch.name}
