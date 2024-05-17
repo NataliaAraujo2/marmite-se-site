@@ -47,11 +47,28 @@ const ProductList = ({ cartProduct, button = null }) => {
       return 0;
     }
 
-    if (accompanimentsList) {
+    if (accompanimentsList) {git 
       const sortAccompanimentsName = accompanimentsList.sort(compare);
       setExistAccompaniments(sortAccompanimentsName);
     }
   }, [accompanimentsList, cartProduct]);
+
+  useEffect(() => {
+    const productCartInclude = existCart.includes(cartProduct.id)
+    if(cartProduct.product.accompaniments!=="SIM" && !productCartInclude) {
+      const id = `${cartProduct.id} `;
+      insertCart(id, {
+        cartProduct,
+        price,
+        qty
+      });
+    }
+  
+    // return () => {
+    //   second
+    // }
+  }, [qty,price,cartProduct, existCart, insertCart])
+  
 
   const handleCartProductIncrease = () => {
     const qtyProduct = qty + 1;
@@ -65,6 +82,13 @@ const ProductList = ({ cartProduct, button = null }) => {
 
     if (cartProduct.product.accompaniments === "SIM") {
       setAccompaniments(true);
+    } else {
+      const id = `${cartProduct.id} `;
+      insertCart(id, {
+        cartProduct,
+        price,
+        qty
+      });
     }
   };
 
@@ -95,10 +119,9 @@ const ProductList = ({ cartProduct, button = null }) => {
   }
 
   const handleIncreaseQtyAccompaniments = (data) => {
-    if(accompanimentQty.length < 3) {
+    if (accompanimentQty.length < 3) {
       setAccompanimentQty((pre) => [...pre, data]);
     }
-
   };
 
   const handleDecreaseQtyAccompaniments = (data) => {
@@ -164,19 +187,23 @@ const ProductList = ({ cartProduct, button = null }) => {
               {!accompaniments && (
                 <>
                   {existCart.includes(cartProduct.id) ? (
-                    <div className={styles.buttons}>
-                    <div className={styles.add}>
-                    <FaPlus onClick={handleCartProductIncrease} />
-                      <span>{qty}</span>
-                      <FaMinus onClick={handleCartProductDecrease} />
-                    </div>
+                    <>
+                      {" "}
+                      <span className={styles.price}>R${price}</span>
+                      <div className={styles.buttons}>
+                        <div className={styles.add}>
+                          <FaPlus onClick={handleCartProductIncrease} />
+                          <span>{qty}</span>
+                          <FaMinus onClick={handleCartProductDecrease} />
+                        </div>
 
-                      <div className={styles.delete}>
-                        <button onClick={() => deleteDocument(id)}>
-                          Excluir
-                        </button>
-                      </div>
-                    </div>
+                        <div className={styles.delete}>
+                          <button onClick={() => deleteDocument(id)}>
+                            Excluir
+                          </button>
+                        </div>
+                      </div>{" "}
+                    </>
                   ) : (
                     <>
                       <span className={styles.price}>R${price}</span>
@@ -232,7 +259,23 @@ const ProductList = ({ cartProduct, button = null }) => {
         </>
       )}
 
-      <></>
+      {cartProduct.product.accompaniments !== "SIM" && (
+        <>
+          {" "}
+          <span className={styles.price}>R${price}</span>
+          <div className={styles.buttons}>
+            <div className={styles.add}>
+              <FaPlus onClick={handleCartProductIncrease} />
+              <span>{qty}</span>
+              <FaMinus onClick={handleCartProductDecrease} />
+            </div>
+
+            <div className={styles.delete}>
+              <button onClick={() => deleteDocument(id)}>Excluir</button>
+            </div>
+          </div>{" "}
+        </>
+      )}
     </div>
   );
 };
