@@ -65,48 +65,81 @@ const ProductList = ({ cartProduct, button = null }) => {
     }
   }, [qty, price, cartProduct, existCart, insertCart]);
 
-  async function increase () {
-      const qtyProduct = qty + 1;
+  // Aumenta e Diminui a quantidade do mesmo produto (sem acompanhamento) 
+  const productCartInclude = existCart.includes(cartProduct.id);
+
+  async function increase() {
+    const qtyProduct = qty + 1;
+    const productPrice = cartProduct.product.price;
+    const total = qtyProduct * productPrice;
+    const totalProductPrice = total.toLocaleString("pt-br", {
+      minimumFractionDigits: 2,
+    });
+    await setQty(qtyProduct);
+    await setPrice(totalProductPrice);
+  }
+
+
+  async function decrease() {
+    if (cartProduct.qty > 1) {
+      const qtyProduct = qty - 1;
       const productPrice = cartProduct.product.price;
       const total = qtyProduct * productPrice;
       const totalProductPrice = total.toLocaleString("pt-br", {
         minimumFractionDigits: 2,
       });
-     await setQty(qtyProduct);
-     await setPrice(totalProductPrice);
+      await setQty(qtyProduct);
+      await setPrice(totalProductPrice);
+      console.log(totalProductPrice);
+    }
   }
 
   const handleCartProductIncrease = async () => {
     if (cartProduct.product.accompaniments === "SIM") {
-      increase()
+      increase();
       setAccompaniments(true);
     }
 
-    const productCartInclude = existCart.includes(cartProduct.id);
     if (cartProduct.product.accompaniments !== "SIM" && productCartInclude) {
-     increase()
-     const productQtyCartInclude = 1
-     const qytTotal = productQtyCartInclude+qty 
+      increase();
+      const productQtyCartInclude = 1;
+      const qtytTotal = productQtyCartInclude + qty;
+      const priceTotal = qtytTotal * cartProduct.product.price;
+      const totalPrice = priceTotal.toLocaleString("pt-br", {
+        minimumFractionDigits: 2,
+      });
       const id = `${cartProduct.id} `;
       insertCart(id, {
         cartProduct,
-        price,
-        qty: qytTotal,
+        price: totalPrice,
+        qty: qtytTotal,
       });
     }
   };
 
   const handleCartProductDecrease = () => {
-    if (cartProduct.qty > 1) {
-      const qtyProduct = qty + 1;
-      const productPrice = cartProduct.product.price;
-      const total = qtyProduct * productPrice;
-      const totalProductPrice = total.toLocaleString("pt-br", {
+
+
+    if (cartProduct.product.accompaniments !== "SIM" && productCartInclude) {
+      decrease();
+      const productQtyCartInclude = 1;
+      const qtyTotal =  qty - productQtyCartInclude ;
+      // console.log(qtyTotal)
+      const priceTotal = qtyTotal * cartProduct.product.price;
+      // console.log(priceTotal)
+      const totalPrice = priceTotal.toLocaleString("pt-br", {
         minimumFractionDigits: 2,
       });
-      setPrice(totalProductPrice);
-      setQty(qtyProduct);
-      console.log(totalProductPrice);
+
+      setQty(qtyTotal)
+      setPrice(totalPrice)
+
+      const id = `${cartProduct.id} `;
+      insertCart(id, {
+        cartProduct,
+        price: totalPrice,
+        qty: qtyTotal,
+      });
     }
   };
 
