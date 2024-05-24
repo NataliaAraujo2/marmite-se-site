@@ -67,7 +67,7 @@ export const useFetchDocuments = (docCollection, uid = null, state=null, branchN
     }
 
     loadData();
-  }, [docCollection, uid, cancelled]);
+  }, [docCollection, uid, cancelled, branchName, product, state]);
 
   useEffect(() => {
     return () => setCancelled(true);

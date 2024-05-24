@@ -28,13 +28,10 @@ const ProductList = ({ cartProduct, button = null }) => {
   const { insertCart } = useInsertDocument(`Cart ${uid}`);
   const [accompanimentQty, setAccompanimentQty] = useState([]);
   const [id, setId] = useState("");
-  const existCart = [];
+  const [existCart, setExistCart] = useState([])
+  const [cancelled, setCancelled] = useState(false);
 
-  if (cart) {
-    cart.map((products) => existCart.push(products.cartProduct.id));
-  }
-
-  console.log(existCart);
+ 
   useEffect(() => {
     if (cartProduct) {
       setPrice(cartProduct.product.price);
@@ -65,7 +62,7 @@ const ProductList = ({ cartProduct, button = null }) => {
     }
   }, [qty, price, cartProduct, existCart, insertCart]);
 
-  // Aumenta e Diminui a quantidade do mesmo produto (sem acompanhamento) 
+  // Aumenta e Diminui a quantidade do mesmo produto (sem acompanhamento)
   const productCartInclude = existCart.includes(cartProduct.id);
 
   async function increase() {
@@ -78,7 +75,6 @@ const ProductList = ({ cartProduct, button = null }) => {
     await setQty(qtyProduct);
     await setPrice(totalProductPrice);
   }
-
 
   async function decrease() {
     if (cartProduct.qty > 1) {
@@ -95,8 +91,8 @@ const ProductList = ({ cartProduct, button = null }) => {
   }
 
   const handleCartProductIncrease = async () => {
+
     if (cartProduct.product.accompaniments === "SIM") {
-      increase();
       setAccompaniments(true);
     }
 
@@ -118,12 +114,11 @@ const ProductList = ({ cartProduct, button = null }) => {
   };
 
   const handleCartProductDecrease = () => {
-
-
+    const productCartInclude = existCart.includes(cartProduct.id);
     if (cartProduct.product.accompaniments !== "SIM" && productCartInclude) {
       decrease();
       const productQtyCartInclude = 1;
-      const qtyTotal =  qty - productQtyCartInclude ;
+      const qtyTotal = qty - productQtyCartInclude;
       // console.log(qtyTotal)
       const priceTotal = qtyTotal * cartProduct.product.price;
       // console.log(priceTotal)
@@ -131,8 +126,8 @@ const ProductList = ({ cartProduct, button = null }) => {
         minimumFractionDigits: 2,
       });
 
-      setQty(qtyTotal)
-      setPrice(totalPrice)
+      setQty(qtyTotal);
+      setPrice(totalPrice);
 
       const id = `${cartProduct.id} `;
       insertCart(id, {

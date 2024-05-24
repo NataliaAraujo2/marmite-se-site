@@ -14,7 +14,7 @@ const Cart = ({ onClick }) => {
   //constCart
 
   const { documents } = useFetchDocuments(`${user.uid}`, uid);
-  console.log(documents);
+
 
   return (
     <div className={styles.shoppingCart}>

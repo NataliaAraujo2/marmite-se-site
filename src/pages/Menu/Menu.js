@@ -48,30 +48,14 @@ const Menu = () => {
 
   const addToCart = async(product) => {
     if (uid !== null) {
-      const qty = 1;
-      const total = qty * product.price;
-
-      const totalProductPrice = total.toLocaleString("pt-br", {
-        minimumFractionDigits: 2,
-      });
 
       const id = `${product.id}`;
       
       insertCart(id, {
         uid,
-        product,
-        qty,
-        totalProductPrice,
+        product
       });
 
-      if(product.accompaniments !== "SIM"){
-        insertCart(id, {
-          uid,
-          product,
-          qty,
-          totalProductPrice,
-        });
-      }
 
       console.log("Sucess");
     } else {
