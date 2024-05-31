@@ -25,28 +25,17 @@ import { useAuthentication } from "../../hooks/useAuthentication";
 import { useAuthValue } from "../../context/AuthContext";
 
 const Navbar = () => {
-  const [cancelled, setCancelled] = useState(false);
   const [menuMobile, setMenuMobile] = useState(false);
   const showMenuMobile = () => setMenuMobile(!menuMobile);
-  const [openModal, setOpenModal] = useState(false);
   const [uid, setUid] = useState("");
   const { user } = useAuthValue();
   const { logout } = useAuthentication();
-
-  console.log(openModal);
 
   useEffect(() => {
     if (user) {
       setUid(user.uid);
     }
-
-    if (cancelled) return;
-    setOpenModal(false);
-
-    return () => {
-      setCancelled(true);
-    };
-  }, [cancelled]);
+  }, [user]);
 
   return (
     <div className={styles.navbar}>

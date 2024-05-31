@@ -1,6 +1,6 @@
 import styles from "./ProductList.module.css";
 import React, { useEffect, useState } from "react";
-import { useUpdateDocument } from "../../../hooks/useUpdateDocument";
+
 import { useAuthValue } from "../../../context/AuthContext";
 import { useDeleteDocument } from "../../../hooks/useDeleteDocument";
 import { useInsertDocument } from "../../../hooks/useInsertDocuments";
@@ -12,7 +12,7 @@ const ProductList = ({ cartProduct, button = null }) => {
   const { user } = useAuthValue();
   const uid = user.uid;
   const branchName = "Acompanhamentos";
-  const { documents: cart } = useFetchDocuments(`Cart ${uid}`);
+
   const { documents: accompanimentsList } = useFetchDocuments(
     "products",
     null,
@@ -23,13 +23,13 @@ const ProductList = ({ cartProduct, button = null }) => {
   const [existAccompaniments, setExistAccompaniments] = useState([]);
   const { deleteDocument } = useDeleteDocument(`${uid}`);
   const [accompaniments, setAccompaniments] = useState(false);
-  const [qty, setQty] = useState(1);
+  const qty=1;
   const [price, setPrice] = useState("");
   const { insertCart } = useInsertDocument(`Cart ${uid}`);
   const [accompanimentQty, setAccompanimentQty] = useState([]);
   const [id, setId] = useState("");
-  const [existCart, setExistCart] = useState([])
-  const [cancelled, setCancelled] = useState(false);
+  const existCart=[]
+ 
 
  
   useEffect(() => {
@@ -49,94 +49,7 @@ const ProductList = ({ cartProduct, button = null }) => {
     }
   }, [accompanimentsList, cartProduct]);
 
-  useEffect(() => {
-    const productCartInclude = existCart.includes(cartProduct.id);
-    if (cartProduct.product.accompaniments !== "SIM" && !productCartInclude) {
-      const priceProduct = cartProduct.product.price;
-      const id = `${cartProduct.id} `;
-      insertCart(id, {
-        cartProduct,
-        price: priceProduct,
-        qty,
-      });
-    }
-  }, [qty, price, cartProduct, existCart, insertCart]);
 
-  // Aumenta e Diminui a quantidade do mesmo produto (sem acompanhamento)
-  const productCartInclude = existCart.includes(cartProduct.id);
-
-  async function increase() {
-    const qtyProduct = qty + 1;
-    const productPrice = cartProduct.product.price;
-    const total = qtyProduct * productPrice;
-    const totalProductPrice = total.toLocaleString("pt-br", {
-      minimumFractionDigits: 2,
-    });
-    await setQty(qtyProduct);
-    await setPrice(totalProductPrice);
-  }
-
-  async function decrease() {
-    if (cartProduct.qty > 1) {
-      const qtyProduct = qty - 1;
-      const productPrice = cartProduct.product.price;
-      const total = qtyProduct * productPrice;
-      const totalProductPrice = total.toLocaleString("pt-br", {
-        minimumFractionDigits: 2,
-      });
-      await setQty(qtyProduct);
-      await setPrice(totalProductPrice);
-      console.log(totalProductPrice);
-    }
-  }
-
-  const handleCartProductIncrease = async () => {
-
-    if (cartProduct.product.accompaniments === "SIM") {
-      setAccompaniments(true);
-    }
-
-    if (cartProduct.product.accompaniments !== "SIM" && productCartInclude) {
-      increase();
-      const productQtyCartInclude = 1;
-      const qtytTotal = productQtyCartInclude + qty;
-      const priceTotal = qtytTotal * cartProduct.product.price;
-      const totalPrice = priceTotal.toLocaleString("pt-br", {
-        minimumFractionDigits: 2,
-      });
-      const id = `${cartProduct.id} `;
-      insertCart(id, {
-        cartProduct,
-        price: totalPrice,
-        qty: qtytTotal,
-      });
-    }
-  };
-
-  const handleCartProductDecrease = () => {
-    const productCartInclude = existCart.includes(cartProduct.id);
-    if (cartProduct.product.accompaniments !== "SIM" && productCartInclude) {
-      decrease();
-      const productQtyCartInclude = 1;
-      const qtyTotal = qty - productQtyCartInclude;
-      // console.log(qtyTotal)
-      const priceTotal = qtyTotal * cartProduct.product.price;
-      // console.log(priceTotal)
-      const totalPrice = priceTotal.toLocaleString("pt-br", {
-        minimumFractionDigits: 2,
-      });
-
-      setQty(qtyTotal);
-      setPrice(totalPrice);
-
-      const id = `${cartProduct.id} `;
-      insertCart(id, {
-        cartProduct,
-        price: totalPrice,
-        qty: qtyTotal,
-      });
-    }
-  };
 
   function handleChangeAccompaniments(event) {
     const { value, checked } = event.target;
@@ -224,9 +137,9 @@ const ProductList = ({ cartProduct, button = null }) => {
                       <span className={styles.price}>R${price}</span>
                       <div className={styles.buttons}>
                         <div className={styles.add}>
-                          <FaPlus onClick={handleCartProductIncrease} />
+                          <FaPlus />
                           <span>{qty}</span>
-                          <FaMinus onClick={handleCartProductDecrease} />
+                          <FaMinus />
                         </div>
 
                         <div className={styles.delete}>
@@ -297,9 +210,9 @@ const ProductList = ({ cartProduct, button = null }) => {
           <span className={styles.price}>R${price}</span>
           <div className={styles.buttons}>
             <div className={styles.add}>
-              <FaPlus onClick={handleCartProductIncrease} />
+              <FaPlus  />
               <span>{qty}</span>
-              <FaMinus onClick={handleCartProductDecrease} />
+              <FaMinus  />
             </div>
 
             <div className={styles.delete}>

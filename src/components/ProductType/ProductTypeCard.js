@@ -5,7 +5,6 @@ import styles from "./ProductTypeCard.module.css";
 import Button from "../Button/NavLinkButton";
 import { FaInfo } from "react-icons/fa";
 
-import logo from "../../images/logo.png";
 
 const ProductTypeCard = ({ image, Title, feature, to }) => {
   return (

@@ -1,27 +1,12 @@
 import styles from "./ProductCard.module.css";
 import React, { useEffect, useState } from "react";
-import { useFetchDocuments } from "../../../hooks/useFetchDocuments";
-import { useAuthValue } from "../../../context/AuthContext";
-import NavLinkButton from "../../Button/NavLinkButton";
-import { FaShoppingCart } from "react-icons/fa";
+
+
 
 const ProductCard = ({ addToCart, individualProduct }) => {
-   const [price, setPrice] = useState("");
+  const [price, setPrice] = useState("");
   const [cancelled, setCancelled] = useState(false);
 
-
-  const { user } = useAuthValue();
-  const uid = user.uid;
-  const { documents: cart } = useFetchDocuments(`${user.uid}`);
- const existCart=[]
- 
-
-
-    if (cart) {
-      cart.map((products) => existCart.push(products.id));
-    }
-    // console.log(existCart);
- 
 
 
   useEffect(() => {
@@ -50,29 +35,22 @@ const ProductCard = ({ addToCart, individualProduct }) => {
 
   return (
     <div className={styles.productCard} key={individualProduct.id}>
-         <div className={styles.image}>
+      <div className={styles.image}>
         <img src={individualProduct.url} alt={individualProduct.name} />
       </div>
-      <div className={styles.productDetails}>
+      <div className={styles.productDetails} key={individualProduct.id}>
         <span className={styles.name}>{individualProduct.name}</span>
 
         <label className={styles.description}>
           {individualProduct.description}
         </label>
+
         <span className={styles.price}>R${price}</span>
       </div>
       <div className={styles.button}>
-        {existCart.includes(individualProduct.id) ? (
-          <NavLinkButton
-            Icon={FaShoppingCart}
-            Text="Ir para o Carrinho"
-            to={`/cart/Cart ${uid}`}
-          />
-        ) : (
-          <button className={styles.addToCart} onClick={handleAddToCart}>
-            Adicionar ao Carrinho
-          </button>
-        )}
+        <button className={styles.addToCart} onClick={handleAddToCart}>
+          Adicionar ao Carrinho
+        </button>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { db } from "../firebase/config";
 import { useEffect, useState } from "react";
 
 export const useFetchDocuments = (docCollection, uid = null, state=null, branchName=null, product=null) => {
-  const [documents, setDocuments] = useState(null);
+  const [documents, setDocuments] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
 

@@ -6,19 +6,18 @@ import { useAuthValue } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useInsertDocument } from "../../hooks/useInsertDocuments";
 
-
 const Menu = () => {
   const state = "ATIVO";
   const { documents: branchs } = useFetchDocuments("branchs", null, state);
   const { documents: products } = useFetchDocuments("products", null, state);
-  
+
   const [uid, setUid] = useState(null);
   const [existBranch, setExistBranch] = useState([]);
   const [existProduct, setExistProduct] = useState([]);
   const { user } = useAuthValue();
 
   const navigate = useNavigate();
-  const { insertCart } = useInsertDocument(`${uid}`);
+  const { insertCart } = useInsertDocument(`Cart ${uid}`);
 
   useEffect(() => {
     function compare(a, b) {
@@ -40,36 +39,48 @@ const Menu = () => {
       const sortProductsName = products.sort(compare);
       setExistProduct(sortProductsName);
     }
-
   }, [branchs, products, user]);
 
-
-
-
-  const addToCart = async(product) => {
+  const addToCart = async (product) => {
     if (uid !== null) {
+      if (product.accompaniments !== "SIM") {
+        const id = `${product.id}`;
+        const qty = 1;
+        const calcTotalPrice = product.price * qty;
+        const totalPrice = calcTotalPrice.toLocaleString("pt-br", {
+          minimumFractionDigits: 2,
+        });
 
-      const id = `${product.id}`;
-      
-      insertCart(id, {
-        uid,
-        product
-      });
+        insertCart(id, {
+          uid,
+          qty,
+          totalPrice,
+          product,
+        });
 
+        console.log("Sucess");
+      } else {
+        const qty = 1;
+        const id = `${product.id}.${qty}`;
+        const calcTotalPrice = product.price * qty;
+        const totalPrice = calcTotalPrice.toLocaleString("pt-br", {
+          minimumFractionDigits: 2,
+        });
 
-      console.log("Sucess");
+        insertCart(id, {
+          uid,
+          qty,
+          totalPrice,
+          product,
+        });
+      }
     } else {
       navigate("/login");
     }
-
-    console.log(document)
   };
-
-  
 
   return (
     <div className={styles.menu}>
-  
       {existBranch &&
         existBranch.map((branch) => (
           <div key={branch.id}>
@@ -84,7 +95,6 @@ const Menu = () => {
                       <ProductCard
                         individualProduct={product}
                         addToCart={addToCart}
-                     
                       />
                     )}
                   </div>
@@ -92,7 +102,6 @@ const Menu = () => {
             </div>
           </div>
         ))}
-    
     </div>
   );
 };
