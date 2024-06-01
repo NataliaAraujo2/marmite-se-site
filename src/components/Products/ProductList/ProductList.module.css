@@ -3,9 +3,10 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   margin: 0;
-  padding: 0.2em;
+  margin-bottom: 0.2em;
+  width: 100%;
+  border: 1px solid var(--blue);
 }
 
 .image {
@@ -19,22 +20,45 @@
   border: 1px solid var(--grey-dark);
 }
 
+.productDetails{
+  width: 60%;
+  margin-left: 1em;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+}
+
 .name {
-  width: 30%;
-  font-weight: bolder;
+  width: 40%;
+  font-weight: bold;
   text-align: left;
 }
 
-.price {
-  width: 10%;
+.accompaniment{
+  width: 40%;
+  text-align: left;
 }
+
+.accompaniment li {
+  margin-bottom: 0.5em;
+}
+
+.productButton{
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
 
 .buttons {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  width: 30%;
+  margin-bottom: 0.5em;
 }
 
 .buttons button:hover,
@@ -50,6 +74,10 @@
   flex-direction: row;
   align-items: center;
   font-size: 1.8em;
+}
+
+.add span{
+  font-size: 0.5em;
 }
 
 .add button {
@@ -79,30 +107,14 @@
   font-size: 1em;
 }
 
-.accompanimentsBox {
-  border: 1px solid black;
-  width: max-content;
-  padding-top: 0.5em;
-  padding-left: 0.5em;
+.addButton {
+  width: 60%;
+  padding: 0.3em;
 }
-
-.navAccompaniments {
+.delete {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  height: 2em;
-  margin-bottom: 1em;
-}
-
-.accompanimentsOverflow {
-  width: fit-content;
-  height: 6em;
-  overflow-y: auto;
-}
-
-.accompanimentsList {
-  width: 100%;
 }
 
 @media screen and (max-width: 959px) {

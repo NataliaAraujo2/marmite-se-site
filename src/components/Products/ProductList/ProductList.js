@@ -1,18 +1,18 @@
-import styles from "./ProductList.module.css";
-import React, { useEffect, useState } from "react";
-
+import { useUpdateDocument } from "../../../hooks/useUpdateDocument";
 import { useAuthValue } from "../../../context/AuthContext";
 import { useDeleteDocument } from "../../../hooks/useDeleteDocument";
 import { useInsertDocument } from "../../../hooks/useInsertDocuments";
 import Accompaniments from "../Accompaniments/Accompaniments";
 import { useFetchDocuments } from "../../../hooks/useFetchDocuments";
 import { FaMinus, FaPlus } from "react-icons/fa6";
+import styles from "./ProductList.module.css";
+import { useEffect, useState } from "react";
 
 const ProductList = ({ cartProduct, button = null }) => {
   const { user } = useAuthValue();
   const uid = user.uid;
   const branchName = "Acompanhamentos";
-
+  const { documents: cart } = useFetchDocuments(`Cart ${uid}`);
   const { documents: accompanimentsList } = useFetchDocuments(
     "products",
     null,
@@ -21,21 +21,38 @@ const ProductList = ({ cartProduct, button = null }) => {
   );
 
   const [existAccompaniments, setExistAccompaniments] = useState([]);
-  const { deleteDocument } = useDeleteDocument(`${uid}`);
+  const { updateDocument } = useUpdateDocument(`Cart ${uid}`);
+  const { deleteDocument } = useDeleteDocument(`Cart ${uid}`);
   const [accompaniments, setAccompaniments] = useState(false);
-  const qty=1;
+  const [qty, setQty] = useState(1);
   const [price, setPrice] = useState("");
   const { insertCart } = useInsertDocument(`Cart ${uid}`);
   const [accompanimentQty, setAccompanimentQty] = useState([]);
   const [id, setId] = useState("");
-  const existCart=[]
- 
+  const [moreAccompanimentsProduct, setMoreAccompanimentsProduct] =
+    useState(false);
+  const existCart = [];
+  const existCartName = [];
+  const existSameProduct = []
 
- 
+  if (cart) {
+    cart.map((products) => {
+      if (products.product.accompaniments === "SIM") {
+        existCartName.push(products.product.name);
+      }
+      return existCartName;
+    });
+    cart.map((products) => existCart.push(products.id));
+    cart.map((products) => existSameProduct.push(products.product.id));
+  }
+
+  
+  
+
   useEffect(() => {
     if (cartProduct) {
-      setPrice(cartProduct.product.price);
-      setId(cartProduct.product.id);
+      setPrice(cartProduct.totalPrice);
+      setId(cartProduct.id);
     }
     function compare(a, b) {
       if (a.name < b.name) return -1;
@@ -49,7 +66,77 @@ const ProductList = ({ cartProduct, button = null }) => {
     }
   }, [accompanimentsList, cartProduct]);
 
+  const handleCartProductIncrease = () => {
+    const qtyProduct = qty + 1;
+    const productPrice = parseFloat(cartProduct.product.price);
+    const total = qtyProduct * productPrice;
+    const totalProductPrice = total.toLocaleString("pt-br", {
+      minimumFractionDigits: 2,
+    });
+    setQty(qtyProduct);
+    setPrice(totalProductPrice);
 
+    const data = { qty: qtyProduct, totalPrice: totalProductPrice };
+    updateDocument(cartProduct.id, data);
+  };
+
+  const handleCartProductDecrease = () => {
+    if (cartProduct.qty > 1) {
+      const qtyProduct = qty - 1;
+      const productPrice = parseFloat(cartProduct.product.price);
+      const total = qtyProduct * productPrice;
+      const totalProductPrice = total.toLocaleString("pt-br", {
+        minimumFractionDigits: 2,
+      });
+      setPrice(totalProductPrice);
+      setQty(qtyProduct);
+      console.log(totalProductPrice);
+
+      if (cartProduct.product.accompaniments !== "SIM") {
+        const data = { qty: qtyProduct, totalPrice: totalProductPrice };
+        updateDocument(cartProduct.id, data);
+      }
+    }
+  };
+
+  const handleSaveCartProductIncrease = () => {
+
+
+    const count = existSameProduct.reduce((acc, num) => {
+      if (num === cartProduct.product.id) {   
+        return acc + 1;
+      } else {
+        return acc;
+      }
+    }, 0);
+
+ 
+
+
+
+    const idSaveProduct = `${cartProduct.product.id}.${count}`;
+    const product = {
+      accompaniments: cartProduct.product.accompaniments,
+      branchName: cartProduct.product.branchName,
+      createAt: cartProduct.product.createAt,
+      description: cartProduct.product.description,
+      id: cartProduct.product.id,
+      name: cartProduct.product.name,
+      price: cartProduct.product.price,
+      state: cartProduct.product.state,
+      url: cartProduct.product.url,
+    };
+    const accompaniment = [];
+    const totalPrice = cartProduct.product.price;
+    insertCart(idSaveProduct, {
+      uid,
+      product,
+      qty,
+      totalPrice,
+      accompaniments: accompaniment,
+    });
+
+  };
 
   function handleChangeAccompaniments(event) {
     const { value, checked } = event.target;
@@ -103,124 +190,160 @@ const ProductList = ({ cartProduct, button = null }) => {
       }));
     }
 
-    const accompaniment = countItems(accompanimentQty);
+    const accompaniments = countItems(accompanimentQty);
 
-    console.log(accompaniment);
+    console.log(accompaniments);
 
-    const id = `${cartProduct.id}.${accompanimentQty} `;
-    insertCart(id, {
-      cartProduct,
-      price,
-      qty,
-      accompaniment,
-    });
+    if (qty === 1) {
+      const data = { accompaniments };
+      updateDocument(cartProduct.id, data);
+    } else {
+    }
+
     setAccompaniments(false);
     setAccompanimentQty([]);
   };
 
   return (
-    <div className={styles.productList}>
-      <div className={styles.image}>
-        <img src={cartProduct.product.url} alt={cartProduct.product.name} />
-      </div>
-      <span className={styles.name}>{cartProduct.product.name}</span>
+    <div>
+      <div className={styles.productList}>
+        <div className={styles.image}>
+          <img src={cartProduct.product.url} alt={cartProduct.product.name} />
+        </div>
+        {cartProduct.product.accompaniments === "SIM" && (
+          <>
+            <div className={styles.productDetails} key={cartProduct.id}>
+              <div className={styles.name}>
+              <span >{cartProduct.product.name}</span>
+              <button
+                  className={styles.addButton}
+                  onClick={handleSaveCartProductIncrease}
+                >
+                  Adicionar item com acompanhamentos diferentes?
+                </button>
+              </div>
+              <div className={styles.accompaniment}>
+                {cartProduct.accompaniments.length > 0 && (
+                  <>
+                    {cartProduct.accompaniments.map((accompanimentChoiced) => (
+                      <li key={accompanimentChoiced}>
+                        {accompanimentChoiced.accompaniment}
+                      </li>
+                    ))}
+                  </>
+                )}
 
-      {cartProduct.product.accompaniments === "SIM" && (
-        <>
-          {button && (
-            <>
-              {!accompaniments && (
                 <>
-                  {existCart.includes(cartProduct.id) ? (
+                  {button && (
                     <>
-                      {" "}
-                      <span className={styles.price}>R${price}</span>
-                      <div className={styles.buttons}>
-                        <div className={styles.add}>
-                          <FaPlus />
-                          <span>{qty}</span>
-                          <FaMinus />
-                        </div>
+                      {!accompaniments && (
+                        <>
+                          {existCart.includes(cartProduct.id) && (
+                            <>
+                              {cartProduct.accompaniments.length > 0 ? (
+                                <button onClick={() => setAccompaniments(true)}>
+                                  Alterar Acompanhamentos
+                                </button>
+                              ) : (
+                                <button onClick={() => setAccompaniments(true)}>
+                                  Escolha 3 Acompanhamentos
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </>
+                      )}
 
-                        <div className={styles.delete}>
-                          <button onClick={() => deleteDocument(id)}>
-                            Excluir
-                          </button>
+                      {accompaniments && (
+                        <div className={styles.accompanimentsBox}>
+                          <div className={styles.navAccompaniments}>
+                            <span>Escolha 3 Acompanhamentos</span>
+                            <button onClick={handleProductAccompaniments}>
+                              OK
+                            </button>
+                          </div>
+
+                          <div className={styles.accompanimentsOverflow}>
+                            {existAccompaniments &&
+                              existAccompaniments.map((accompaniment) => (
+                                <div
+                                  className={styles.accompanimentsList}
+                                  key={accompaniment.id}
+                                >
+                                  <Accompaniments
+                                    accompaniments={accompaniment}
+                                    handleChangeAccompaniments={
+                                      handleChangeAccompaniments
+                                    }
+                                    handleIncreaseQtyAccompaniments={
+                                      handleIncreaseQtyAccompaniments
+                                    }
+                                    handleDecreaseQtyAccompaniments={
+                                      handleDecreaseQtyAccompaniments
+                                    }
+                                    disabled={
+                                      !accompanimentQty.includes(
+                                        accompaniment.name
+                                      ) && accompanimentQty.length > 2
+                                    }
+                                  />
+                                </div>
+                              ))}
+                          </div>
                         </div>
-                      </div>{" "}
-                    </>
-                  ) : (
-                    <>
-                      <span className={styles.price}>R${price}</span>
-                      <div className={styles.buttons}>
-                        <button onClick={() => setAccompaniments(true)}>
-                          Escolha 3 Acompanhamentos
-                        </button>
-                        <div>
-                          <button onClick={() => deleteDocument(id)}>
-                            Excluir
-                          </button>
-                        </div>
-                      </div>
+                      )}
                     </>
                   )}
                 </>
-              )}
-
-              {accompaniments && (
-                <div className={styles.accompanimentsBox}>
-                  <div className={styles.navAccompaniments}>
-                    <span>Escolha 3 Acompanhamentos</span>
-                    <button onClick={handleProductAccompaniments}>OK</button>
+              </div>
+            </div>
+            <div className={styles.productButton}>
+              <div className={styles.buttons}>
+                <span className={styles.price}>R${price}</span>
+                {moreAccompanimentsProduct ? (
+                  <div className={styles.add}>
+                    <FaPlus onClick={handleCartProductIncrease} />
+                    <span>{qty}</span>
+                    <FaMinus onClick={handleCartProductDecrease} />
                   </div>
-
-                  <div className={styles.accompanimentsOverflow}>
-                    {existAccompaniments &&
-                      existAccompaniments.map((accompaniment) => (
-                        <div className={styles.accompanimentsList}>
-                          <Accompaniments
-                            accompaniments={accompaniment}
-                            handleChangeAccompaniments={
-                              handleChangeAccompaniments
-                            }
-                            handleIncreaseQtyAccompaniments={
-                              handleIncreaseQtyAccompaniments
-                            }
-                            handleDecreaseQtyAccompaniments={
-                              handleDecreaseQtyAccompaniments
-                            }
-                            disabled={
-                              !accompanimentQty.includes(accompaniment.name) &&
-                              accompanimentQty.length > 2
-                            }
-                          />
-                        </div>
-                      ))}
-                  </div>
+                ) : (
+                  <button
+                    className={styles.addButton}
+                    onClick={() => setMoreAccompanimentsProduct(true)}
+                  >
+                    Adicionar item com os mesmos acompanhamentos?
+                  </button>
+                )}
+              </div>
+              <div className={styles.buttons}>
+                <div className={styles.delete}>
+                  <button onClick={() => deleteDocument(cartProduct.id)}>
+                    Excluir
+                  </button>
                 </div>
-              )}
-            </>
+
+             
+              </div>
+            </div>
+          </>
+        )}
+
+        <>
+          {cartProduct.product.accompaniments !== "SIM" && (
+            <div className={styles.buttons}>
+              <div className={styles.add}>
+                <FaPlus onClick={handleCartProductIncrease} />
+                <span>{qty}</span>
+                <FaMinus onClick={handleCartProductDecrease} />
+              </div>
+
+              <div className={styles.delete}>
+                <button onClick={() => deleteDocument(id)}>Excluir</button>
+              </div>
+            </div>
           )}
         </>
-      )}
-
-      {cartProduct.product.accompaniments !== "SIM" && (
-        <>
-          {" "}
-          <span className={styles.price}>R${price}</span>
-          <div className={styles.buttons}>
-            <div className={styles.add}>
-              <FaPlus  />
-              <span>{qty}</span>
-              <FaMinus  />
-            </div>
-
-            <div className={styles.delete}>
-              <button onClick={() => deleteDocument(id)}>Excluir</button>
-            </div>
-          </div>{" "}
-        </>
-      )}
+      </div>
     </div>
   );
 };

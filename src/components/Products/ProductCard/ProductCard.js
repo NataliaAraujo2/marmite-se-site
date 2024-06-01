@@ -1,13 +1,22 @@
 import styles from "./ProductCard.module.css";
 import React, { useEffect, useState } from "react";
-
+import { useFetchDocuments } from "../../../hooks/useFetchDocuments";
+import { useAuthValue } from "../../../context/AuthContext";
 
 
 const ProductCard = ({ addToCart, individualProduct }) => {
   const [price, setPrice] = useState("");
   const [cancelled, setCancelled] = useState(false);
 
+  const { user } = useAuthValue();
 
+  const { documents: cart } = useFetchDocuments(`${user.uid}`);
+  const existCart = [];
+
+  if (cart) {
+    cart.map((products) => existCart.push(products.id));
+  }
+  // console.log(existCart);
 
   useEffect(() => {
     if (cancelled) return;
@@ -38,13 +47,12 @@ const ProductCard = ({ addToCart, individualProduct }) => {
       <div className={styles.image}>
         <img src={individualProduct.url} alt={individualProduct.name} />
       </div>
-      <div className={styles.productDetails} key={individualProduct.id}>
+      <div className={styles.productDetails}>
         <span className={styles.name}>{individualProduct.name}</span>
 
         <label className={styles.description}>
           {individualProduct.description}
         </label>
-
         <span className={styles.price}>R${price}</span>
       </div>
       <div className={styles.button}>

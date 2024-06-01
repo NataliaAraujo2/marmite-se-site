@@ -15,13 +15,21 @@ const Cart = () => {
     <div className={styles.shoppingCart}>
       <div className={styles.productsList}>
         <h3>Carrinho de Compras</h3>
+        
+
         {documents &&
-          documents.map((cartIndividualProductProduct) => (
-            <ProductList
-              cartProduct={cartIndividualProductProduct}
-              button={true}
-              key={cartIndividualProductProduct.id}
-            />
+          documents.map((cartIndividualProduct) => (
+            <div key={cartIndividualProduct.id}>
+       
+
+                <ProductList
+                  cartProduct={cartIndividualProduct}
+                  button={true}
+                  key={cartIndividualProduct.id}
+                />
+              
+            
+            </div>
           ))}
       </div>
     </div>

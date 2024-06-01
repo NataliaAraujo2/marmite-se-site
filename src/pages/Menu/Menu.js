@@ -43,37 +43,23 @@ const Menu = () => {
 
   const addToCart = async (product) => {
     if (uid !== null) {
-      if (product.accompaniments !== "SIM") {
-        const id = `${product.id}`;
-        const qty = 1;
-        const calcTotalPrice = product.price * qty;
-        const totalPrice = calcTotalPrice.toLocaleString("pt-br", {
-          minimumFractionDigits: 2,
-        });
+      const id = `${product.id}`;
+      const qty = 1;
+      const calcTotalPrice = product.price * qty;
+      const totalPrice = calcTotalPrice.toLocaleString("pt-br", {
+        minimumFractionDigits: 2,
+      });
+      const accompaniments=[]
+      
+      insertCart(id, {
+        uid,
+        qty,
+        totalPrice,
+        product,
+        accompaniments
+      });
 
-        insertCart(id, {
-          uid,
-          qty,
-          totalPrice,
-          product,
-        });
-
-        console.log("Sucess");
-      } else {
-        const qty = 1;
-        const id = `${product.id}.${qty}`;
-        const calcTotalPrice = product.price * qty;
-        const totalPrice = calcTotalPrice.toLocaleString("pt-br", {
-          minimumFractionDigits: 2,
-        });
-
-        insertCart(id, {
-          uid,
-          qty,
-          totalPrice,
-          product,
-        });
-      }
+      console.log("Sucess");
     } else {
       navigate("/login");
     }
