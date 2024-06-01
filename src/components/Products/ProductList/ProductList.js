@@ -49,6 +49,7 @@ const ProductList = ({ cartProduct, button = null }) => {
   useEffect(() => {
     if (cartProduct) {
       setPrice(cartProduct.totalPrice);
+      setQty(cartProduct.qty);
       setId(cartProduct.id);
     }
     function compare(a, b) {
@@ -95,6 +96,7 @@ const ProductList = ({ cartProduct, button = null }) => {
   };
 
   const handleSaveCartProductIncrease = () => {
+    setQty(1)
     const count = existSameProduct.reduce((acc, num) => {
       if (num === cartProduct.product.id) {
         return acc + 1;
@@ -120,7 +122,7 @@ const ProductList = ({ cartProduct, button = null }) => {
     insertCart(idSaveProduct, {
       uid,
       product,
-      qty,
+      qty:1,
       totalPrice,
       accompaniments: accompaniment,
     });
@@ -156,7 +158,7 @@ const ProductList = ({ cartProduct, button = null }) => {
     filterArray.pop();
 
     const array = accompanimentQty.filter((product) => product !== data);
-    console.log(array);
+    // console.log(array);
 
     setAccompanimentQty(array.concat(filterArray));
   };
@@ -180,20 +182,19 @@ const ProductList = ({ cartProduct, button = null }) => {
 
     const accompaniments = countItems(accompanimentQty);
 
-    console.log(accompaniments);
+    // console.log(accompaniments);
 
-    if (qty === 1) {
       const data = { accompaniments };
       updateDocument(cartProduct.id, data);
-    } else {
-    }
+      
+    
 
     setAccompaniments(false);
     setAccompanimentQty([]);
   };
 
   return (
-    <div>
+    <div key={cartProduct.id}>
       <div className={styles.productList}>
         <div className={styles.image}>
           <img src={cartProduct.product.url} alt={cartProduct.product.name} />
@@ -201,7 +202,7 @@ const ProductList = ({ cartProduct, button = null }) => {
         {cartProduct.product.accompaniments === "SIM" && (
           <>
             <div className={styles.productDetails} key={cartProduct.id}>
-              <div className={styles.name}>
+              <div className={styles.name} key={cartProduct.id}>
                 <span>{cartProduct.product.name}</span>
                 <button
                   className={styles.addButton}
@@ -212,17 +213,18 @@ const ProductList = ({ cartProduct, button = null }) => {
               </div>
               <div className={styles.accompaniment}>
                 {cartProduct.accompaniments.length > 0 && (
-                  <>
+                  <div key={cartProduct.id}>
                     <ul>
                       {cartProduct.accompaniments.map(
-                        (accompanimentChoiced) => (
-                          <li key={accompanimentChoiced}>
+                        (accompanimentChoiced, index) => (
+                          <li key={index}
+                          >
                             {accompanimentChoiced.accompaniment}
                           </li>
                         )
                       )}
                     </ul>
-                  </>
+                  </div>
                 )}
 
                 <>
@@ -233,11 +235,17 @@ const ProductList = ({ cartProduct, button = null }) => {
                           {existCart.includes(cartProduct.id) && (
                             <>
                               {cartProduct.accompaniments.length > 0 ? (
-                                <button  className={styles.addButton} onClick={() => setAccompaniments(true)}>
+                                <button
+                                  className={styles.addButton}
+                                  onClick={() => setAccompaniments(true)}
+                                >
                                   Alterar Acompanhamentos
                                 </button>
                               ) : (
-                                <button onClick={() => setAccompaniments(true)}>
+                                <button
+                                  className={styles.addButton}
+                                  onClick={() => setAccompaniments(true)}
+                                >
                                   Escolha 3 Acompanhamentos
                                 </button>
                               )}
@@ -252,6 +260,9 @@ const ProductList = ({ cartProduct, button = null }) => {
                             <span>Escolha 3 Acompanhamentos</span>
                             <button onClick={handleProductAccompaniments}>
                               OK
+                            </button>
+                            <button onClick={() => setAccompaniments(false)}>
+                              Fechar
                             </button>
                           </div>
 
@@ -290,8 +301,9 @@ const ProductList = ({ cartProduct, button = null }) => {
               </div>
             </div>
             <div className={styles.productButton}>
-              <span className={styles.price}>R${price}</span>
+              
               <div className={styles.buttons}>
+              <span className={styles.price}>R${price}</span>
                 {moreAccompanimentsProduct ? (
                   <div className={styles.add}>
                     <FaPlus onClick={handleCartProductIncrease} />
@@ -299,12 +311,22 @@ const ProductList = ({ cartProduct, button = null }) => {
                     <FaMinus onClick={handleCartProductDecrease} />
                   </div>
                 ) : (
-                  <button
-                    className={styles.addButton}
-                    onClick={() => setMoreAccompanimentsProduct(true)}
-                  >
-                    Adicionar item com os mesmos acompanhamentos?
-                  </button>
+                  <>
+                    {cartProduct.qty > 1 ? (
+                      <div className={styles.add}>
+                        <FaPlus onClick={handleCartProductIncrease} />
+                        <span>{qty}</span>
+                        <FaMinus onClick={handleCartProductDecrease} />
+                      </div>
+                    ) : (
+                      <button
+                        className={styles.addButton}
+                        onClick={() => setMoreAccompanimentsProduct(true)}
+                      >
+                        Adicionar item com os mesmos acompanhamentos?
+                      </button>
+                    )}
+                  </>
                 )}
                 <div className={styles.delete}>
                   <button onClick={() => deleteDocument(cartProduct.id)}>
@@ -323,14 +345,11 @@ const ProductList = ({ cartProduct, button = null }) => {
                 <div className={styles.name}>
                   <span>{cartProduct.product.name}</span>
                 </div>
-    
-   
               </div>
-             
-              
+
               <div className={styles.productButton}>
                 <div className={styles.buttons}>
-                <span className={styles.price}>R${price}</span>
+                  <span className={styles.price}>R${price}</span>
                   <div className={styles.add}>
                     <FaPlus onClick={handleCartProductIncrease} />
                     <span>{qty}</span>
