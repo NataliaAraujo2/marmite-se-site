@@ -10,6 +10,7 @@
 }
 
 .productsList {
+  height: 1em;
   width: 95%;
   padding: 0;
 }

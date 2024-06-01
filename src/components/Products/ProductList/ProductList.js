@@ -33,7 +33,7 @@ const ProductList = ({ cartProduct, button = null }) => {
     useState(false);
   const existCart = [];
   const existCartName = [];
-  const existSameProduct = []
+  const existSameProduct = [];
 
   if (cart) {
     cart.map((products) => {
@@ -45,9 +45,6 @@ const ProductList = ({ cartProduct, button = null }) => {
     cart.map((products) => existCart.push(products.id));
     cart.map((products) => existSameProduct.push(products.product.id));
   }
-
-  
-  
 
   useEffect(() => {
     if (cartProduct) {
@@ -90,29 +87,21 @@ const ProductList = ({ cartProduct, button = null }) => {
       });
       setPrice(totalProductPrice);
       setQty(qtyProduct);
-      console.log(totalProductPrice);
+      // console.log(totalProductPrice);
 
-      if (cartProduct.product.accompaniments !== "SIM") {
-        const data = { qty: qtyProduct, totalPrice: totalProductPrice };
-        updateDocument(cartProduct.id, data);
-      }
+      const data = { qty: qtyProduct, totalPrice: totalProductPrice };
+      updateDocument(cartProduct.id, data);
     }
   };
 
   const handleSaveCartProductIncrease = () => {
-
-
     const count = existSameProduct.reduce((acc, num) => {
-      if (num === cartProduct.product.id) {   
+      if (num === cartProduct.product.id) {
         return acc + 1;
       } else {
         return acc;
       }
     }, 0);
-
- 
-
-
 
     const idSaveProduct = `${cartProduct.product.id}.${count}`;
     const product = {
@@ -135,7 +124,6 @@ const ProductList = ({ cartProduct, button = null }) => {
       totalPrice,
       accompaniments: accompaniment,
     });
-
   };
 
   function handleChangeAccompaniments(event) {
@@ -214,8 +202,8 @@ const ProductList = ({ cartProduct, button = null }) => {
           <>
             <div className={styles.productDetails} key={cartProduct.id}>
               <div className={styles.name}>
-              <span >{cartProduct.product.name}</span>
-              <button
+                <span>{cartProduct.product.name}</span>
+                <button
                   className={styles.addButton}
                   onClick={handleSaveCartProductIncrease}
                 >
@@ -225,11 +213,15 @@ const ProductList = ({ cartProduct, button = null }) => {
               <div className={styles.accompaniment}>
                 {cartProduct.accompaniments.length > 0 && (
                   <>
-                    {cartProduct.accompaniments.map((accompanimentChoiced) => (
-                      <li key={accompanimentChoiced}>
-                        {accompanimentChoiced.accompaniment}
-                      </li>
-                    ))}
+                    <ul>
+                      {cartProduct.accompaniments.map(
+                        (accompanimentChoiced) => (
+                          <li key={accompanimentChoiced}>
+                            {accompanimentChoiced.accompaniment}
+                          </li>
+                        )
+                      )}
+                    </ul>
                   </>
                 )}
 
@@ -241,7 +233,7 @@ const ProductList = ({ cartProduct, button = null }) => {
                           {existCart.includes(cartProduct.id) && (
                             <>
                               {cartProduct.accompaniments.length > 0 ? (
-                                <button onClick={() => setAccompaniments(true)}>
+                                <button  className={styles.addButton} onClick={() => setAccompaniments(true)}>
                                   Alterar Acompanhamentos
                                 </button>
                               ) : (
@@ -298,8 +290,8 @@ const ProductList = ({ cartProduct, button = null }) => {
               </div>
             </div>
             <div className={styles.productButton}>
+              <span className={styles.price}>R${price}</span>
               <div className={styles.buttons}>
-                <span className={styles.price}>R${price}</span>
                 {moreAccompanimentsProduct ? (
                   <div className={styles.add}>
                     <FaPlus onClick={handleCartProductIncrease} />
@@ -314,15 +306,11 @@ const ProductList = ({ cartProduct, button = null }) => {
                     Adicionar item com os mesmos acompanhamentos?
                   </button>
                 )}
-              </div>
-              <div className={styles.buttons}>
                 <div className={styles.delete}>
                   <button onClick={() => deleteDocument(cartProduct.id)}>
                     Excluir
                   </button>
                 </div>
-
-             
               </div>
             </div>
           </>
@@ -330,17 +318,31 @@ const ProductList = ({ cartProduct, button = null }) => {
 
         <>
           {cartProduct.product.accompaniments !== "SIM" && (
-            <div className={styles.buttons}>
-              <div className={styles.add}>
-                <FaPlus onClick={handleCartProductIncrease} />
-                <span>{qty}</span>
-                <FaMinus onClick={handleCartProductDecrease} />
+            <>
+              <div className={styles.productDetails} key={cartProduct.id}>
+                <div className={styles.name}>
+                  <span>{cartProduct.product.name}</span>
+                </div>
+    
+   
               </div>
+             
+              
+              <div className={styles.productButton}>
+                <div className={styles.buttons}>
+                <span className={styles.price}>R${price}</span>
+                  <div className={styles.add}>
+                    <FaPlus onClick={handleCartProductIncrease} />
+                    <span>{qty}</span>
+                    <FaMinus onClick={handleCartProductDecrease} />
+                  </div>
 
-              <div className={styles.delete}>
-                <button onClick={() => deleteDocument(id)}>Excluir</button>
+                  <div className={styles.delete}>
+                    <button onClick={() => deleteDocument(id)}>Excluir</button>
+                  </div>
+                </div>
               </div>
-            </div>
+            </>
           )}
         </>
       </div>

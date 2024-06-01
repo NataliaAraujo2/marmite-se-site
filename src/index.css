@@ -20,9 +20,9 @@ textarea:focus {
 button {
   cursor: pointer;
   border-radius: 10px;
-  font-weight: 700;
+  font-weight: 500;
   border: 1px solid black;
-  padding: 1em;
+  padding: 0.5em;
   height: fit-content;
 }
 
