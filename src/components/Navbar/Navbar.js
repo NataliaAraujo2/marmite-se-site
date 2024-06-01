@@ -21,6 +21,7 @@ import { GrContact, GrDocumentConfig } from "react-icons/gr";
 import { MdRestaurantMenu } from "react-icons/md";
 //hook
 import { useAuthentication } from "../../hooks/useAuthentication";
+import { useFetchDocuments } from "../../hooks/useFetchDocuments";
 //context
 import { useAuthValue } from "../../context/AuthContext";
 
@@ -30,12 +31,28 @@ const Navbar = () => {
   const [uid, setUid] = useState("");
   const { user } = useAuthValue();
   const { logout } = useAuthentication();
+  const { documents: cart } = useFetchDocuments(`Cart ${user.uid}`);
+  const [qty, setQty] = useState(0);
 
   useEffect(() => {
     if (user) {
       setUid(user.uid);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (cart) {
+      //getting the qty from Cart in a separate array
+      const qtyProducts = cart.map((cartProduct) => {
+        return cartProduct.qty;
+      });
+      // console.log(qty);
+
+      //reducing the qty in a single value
+      const reducerOfQty = (acc, currentValue) => acc + currentValue;
+      setQty(qtyProducts.reduce(reducerOfQty, 0));
+    }
+  }, [cart]);
 
   return (
     <div className={styles.navbar}>
@@ -73,12 +90,13 @@ const Navbar = () => {
               </li>
             </ul>
           </div>
-          <div className={styles.links}>
+      
             <div className={styles.link_list}>
-              <li>
+              {user.displayName}
+              <li className={styles.cart}>
                 <NavLinkButton
                   Icon={FaShoppingCart}
-                  Text="Carrinho"
+                  Text={qty}
                   to={`/cart/Cart ${uid}`}
                 />
               </li>
@@ -92,7 +110,7 @@ const Navbar = () => {
                 ></NavLinkButton>
               </li>
             </div>
-          </div>
+   
         </>
       )}
 

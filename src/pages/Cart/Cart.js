@@ -34,7 +34,11 @@ const price = cart.map((cartProduct) => {
 //reducing the totalPrice in a single value
 const reducerOfPrice = (acc, currentValue) => acc+currentValue
 const totalCartPrice = price.reduce(reducerOfPrice,0)
-// const totalCartPriceString = 
+const totalCartPriceString = totalCartPrice.toLocaleString("pt-br", {
+  minimumFractionDigits: 2});
+
+
+
 
   return (
 
@@ -63,7 +67,7 @@ const totalCartPrice = price.reduce(reducerOfPrice,0)
            </div>
            <div className={styles.totalPrice}>
              <h2>
-               Preço Total <span>{totalCartPrice}</span>
+               Preço Total <span>R${totalCartPriceString}</span>
              </h2>
            </div>
            <StripeCheckout> </StripeCheckout>

@@ -31,9 +31,10 @@
 .link_list {
   display: flex;
   list-style: none;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  display: initial;
+
 }
 
 .links {
