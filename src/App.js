@@ -31,6 +31,7 @@ import Cart from "./pages/Cart/Cart"
 //components
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
+import Contact from "./pages/Contact/Contact";
 
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/resume/:id" element={<Resume />} />
             <Route
               path="/login"

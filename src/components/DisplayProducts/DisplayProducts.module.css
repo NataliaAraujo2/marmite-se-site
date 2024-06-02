@@ -41,3 +41,13 @@
   padding: 0.3em;
   border-radius: 10px;
 }
+
+@media screen and (max-width: 959px) {
+  .main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+

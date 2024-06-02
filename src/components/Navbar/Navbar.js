@@ -14,7 +14,6 @@ import {
   FaLock,
   FaPen,
   FaShoppingCart,
-  FaStore,
   FaUnlock,
 } from "react-icons/fa";
 import { GrContact, GrDocumentConfig } from "react-icons/gr";
@@ -115,9 +114,6 @@ const Navbar = () => {
                 />
               </li>
               <li>
-                <NavLinkButton Icon={FaStore} to="/store" Text="Loja" />
-              </li>
-              <li>
                 <NavLinkButton Icon={FaInfo} to="/about" Text="Sobre" />
               </li>
 
@@ -175,9 +171,6 @@ const Navbar = () => {
                   to="/menu"
                   Text="Cardápio"
                 />
-              </li>
-              <li>
-                <NavLinkButton Icon={FaStore} to="/store" Text="Loja" />
               </li>
               <li>
                 <NavLinkButton Icon={FaInfo} to="/about" Text="Sobre" />
