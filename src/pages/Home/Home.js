@@ -54,7 +54,7 @@ const Home = () => {
             image={branch.url}
             Title={branch.name}
             feature={branch.features}
-            to={`/store/${branch.branchName}`}
+            to={`/store/${branch.name}`}
           />
         ))}
 

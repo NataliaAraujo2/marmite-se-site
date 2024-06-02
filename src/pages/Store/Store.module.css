@@ -1,18 +1,30 @@
-.store {
+.store{
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin-top: 1em;
 }
 
-.store h1 {
-    text-align: center;
+
+.description {
+    background-color: var(--blue);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 1em;
 }
 
-.productList{
+.description span {
+    width: 80%;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.productsList {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
-    justify-content: space-around;
 }

@@ -21,9 +21,10 @@ import { GrContact, GrDocumentConfig } from "react-icons/gr";
 import { MdRestaurantMenu } from "react-icons/md";
 //hook
 import { useAuthentication } from "../../hooks/useAuthentication";
-import { useFetchDocuments } from "../../hooks/useFetchDocuments";
 //context
 import { useAuthValue } from "../../context/AuthContext";
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 const Navbar = () => {
   const [menuMobile, setMenuMobile] = useState(false);
@@ -31,19 +32,54 @@ const Navbar = () => {
   const [uid, setUid] = useState("");
   const { user } = useAuthValue();
   const { logout } = useAuthentication();
-  const { documents: cart } = useFetchDocuments(`Cart ${user.uid}`);
   const [qty, setQty] = useState(0);
+ 
+  const [documents, setDocuments] =useState([])
+ 
+
 
   useEffect(() => {
+    async function loadData() {
+
+      const collectionRef = await collection(db, `Cart ${user.uid}`);
+      try {
+        let q;
+
+       if (uid) {
+          q = await query(
+            collectionRef,
+            where("uid", "==", uid),
+            orderBy("createAt", "desc")
+          );
+        } else {
+          q = await query(collectionRef, orderBy("createAt", "desc"));
+        }
+        await onSnapshot(q, (querySnapshot) => {
+          setDocuments(
+            querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+          );
+        });
+
+        
+      } catch (error) {
+        console.log(error);
+ 
+        
+      }
+    }
     if (user) {
       setUid(user.uid);
+      loadData()
     }
-  }, [user]);
-
+  }, [user, uid]);
+  
   useEffect(() => {
-    if (cart) {
+    if (documents) {
       //getting the qty from Cart in a separate array
-      const qtyProducts = cart.map((cartProduct) => {
+      const qtyProducts = documents.map((cartProduct) => {
         return cartProduct.qty;
       });
       // console.log(qty);
@@ -51,8 +87,8 @@ const Navbar = () => {
       //reducing the qty in a single value
       const reducerOfQty = (acc, currentValue) => acc + currentValue;
       setQty(qtyProducts.reduce(reducerOfQty, 0));
-    }
-  }, [cart]);
+    } 
+  }, [documents]);
 
   return (
     <div className={styles.navbar}>
@@ -90,27 +126,26 @@ const Navbar = () => {
               </li>
             </ul>
           </div>
-      
-            <div className={styles.link_list}>
-              {user.displayName}
-              <li className={styles.cart}>
-                <NavLinkButton
-                  Icon={FaShoppingCart}
-                  Text={qty}
-                  to={`/cart/Cart ${uid}`}
-                />
-              </li>
-              <li>
-                <NavLinkButton
-                  onClick={logout}
-                  to="/"
-                  Icon={FaUnlock}
-                  Text="Logout"
-                  className={styles.siderbaritem}
-                ></NavLinkButton>
-              </li>
-            </div>
-   
+
+          <div className={styles.link_list}>
+            {user.displayName}
+            <li className={styles.cart}>
+              <NavLinkButton
+                Icon={FaShoppingCart}
+                Text={qty}
+                to={`/cart/Cart ${uid}`}
+              />
+            </li>
+            <li>
+              <NavLinkButton
+                onClick={logout}
+                to="/"
+                Icon={FaUnlock}
+                Text="Logout"
+                className={styles.siderbaritem}
+              ></NavLinkButton>
+            </li>
+          </div>
         </>
       )}
 

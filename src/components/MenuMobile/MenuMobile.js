@@ -6,7 +6,6 @@ import {
   FaShoppingBag,
   FaStore,
   FaTimes,
-  FaUnlock,
   FaUserCog,
 } from "react-icons/fa";
 
@@ -16,82 +15,73 @@ import { MdRestaurantMenu } from "react-icons/md";
 import { GrContact, GrDocumentConfig } from "react-icons/gr";
 import { Container, Content } from "./styles";
 import { useAuthValue } from "../../context/AuthContext";
-import { useAuthentication } from "../../hooks/useAuthentication";
 
 const MenuMobile = ({ active }) => {
   const closeMenu = () => {
+   
     active(false);
   };
-  const { user } = useAuthValue();
-  const { logout } = useAuthentication();
 
-  const handleClick = () => {
-    logout();
-    closeMenu();
-  };
+  const { user } = useAuthValue();
+
+
 
   return (
     <Container menumobile={active}>
       <FaTimes onClick={closeMenu} />
       {user && (
         <Content>
-          <NavLinkButton Icon={FaHome} to="/" Text="Início" action={closeMenu} />
+          <NavLinkButton Icon={FaHome} to="/" Text="Início" onClick={closeMenu} />
           <NavLinkButton
             Icon={MdRestaurantMenu}
             to="/menu"
             Text="Cardápio"
-            action={closeMenu}
+            onClick={closeMenu}
           />
-          <NavLinkButton Icon={FaStore} to="/store" Text="Loja" action={closeMenu} />
-          <NavLinkButton Icon={FaInfo} to="/about" Text="Sobre" action={closeMenu} />
+          <NavLinkButton Icon={FaInfo} to="/about" Text="Sobre" onClick={closeMenu} />
           <NavLinkButton
             Icon={FaShoppingBag}
             to="/"
             Text="Meus Pedidos"
-            action={closeMenu}
+            onClick={closeMenu}
           />
           <NavLinkButton
             Icon={FaUserCog}
             to=""
             Text="Meus Dados"
-            action={closeMenu}
+            onClick={closeMenu}
           />
           <NavLinkButton
             Icon={GrContact}
             to="/contact"
             Text="Contato"
-            action={closeMenu}
+            onClick={closeMenu}
           />
           <NavLinkButton
             Icon={GrDocumentConfig}
             to="/admin/products"
             Text="Contato"
-            action={closeMenu}
+            onClick={closeMenu}
           />
-          <NavLinkButton
-            action={handleClick}
-            to="/"
-            Icon={FaUnlock}
-            Text="Logout"
-          />
+     
         </Content>
       )}
       {!user && (
         <Content>
-          <NavLinkButton Icon={FaHome} to="/" Text="Início" action={closeMenu} />
+          <NavLinkButton Icon={FaHome} to="/" Text="Início" onClick={closeMenu} />
           <NavLinkButton
             Icon={MdRestaurantMenu}
             to="/menu"
             Text="Cardápio"
-            action={closeMenu}
+            onClick={closeMenu}
           />
-          <NavLinkButton Icon={FaStore} to="/store" Text="Loja" action={closeMenu} />
-          <NavLinkButton Icon={FaInfo} to="/about" Text="Sobre" action={closeMenu} />
+          <NavLinkButton Icon={FaStore} to="/store" Text="Loja" onClick={closeMenu} />
+          <NavLinkButton Icon={FaInfo} to="/about" Text="Sobre" onClick={closeMenu} />
           <NavLinkButton
             Icon={GrContact}
             to="/contact"
             Text="Contato"
-            action={closeMenu}
+            onClick={closeMenu}
           />
         </Content>
       )}

@@ -1,22 +1,10 @@
 import styles from "./ProductCard.module.css";
 import React, { useEffect, useState } from "react";
-import { useFetchDocuments } from "../../../hooks/useFetchDocuments";
-import { useAuthValue } from "../../../context/AuthContext";
-
 
 const ProductCard = ({ addToCart, individualProduct }) => {
   const [price, setPrice] = useState("");
   const [cancelled, setCancelled] = useState(false);
 
-  const { user } = useAuthValue();
-
-  const { documents: cart } = useFetchDocuments(`${user.uid}`);
-  const existCart = [];
-
-  if (cart) {
-    cart.map((products) => existCart.push(products.id));
-  }
-  // console.log(existCart);
 
   useEffect(() => {
     if (cancelled) return;
@@ -37,6 +25,7 @@ const ProductCard = ({ addToCart, individualProduct }) => {
       }
     };
   }, [individualProduct, price, cancelled]);
+
 
   const handleAddToCart = () => {
     addToCart(individualProduct);

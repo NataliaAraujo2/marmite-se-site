@@ -14,7 +14,7 @@ const DisplayProducts = ({ url }) => {
       <div className={styles.main}>
         {url === "store" && <h3>VER TODAS AS OPÇÕES DE</h3>}
         <NavLink
-          to={`/${url}/pockets`}
+          to={`/${url}/Marmitas`}
           className={({ isActive }) =>
             isActive ? styles.active : styles.navlink
           }
@@ -22,7 +22,7 @@ const DisplayProducts = ({ url }) => {
           MARMITAS
         </NavLink>
         <NavLink
-          to={`/${url}/frozenFoods`}
+          to={`/${url}/Congelados`}
           className={({ isActive }) =>
             isActive ? styles.active : styles.navlink
           }
@@ -30,7 +30,7 @@ const DisplayProducts = ({ url }) => {
           CONGELADOS
         </NavLink>
         <NavLink
-          to={`/${url}/broths`}
+          to={`/${url}/Caldos e Sopas`}
           className={({ isActive }) =>
             isActive ? styles.active : styles.navlink
           }
@@ -38,7 +38,7 @@ const DisplayProducts = ({ url }) => {
           CALDOS
         </NavLink>
         <NavLink
-          to={`/${url}/desserts`}
+          to={`/${url}/Sobremesas`}
           className={({ isActive }) =>
             isActive ? styles.active : styles.navlink
           }
@@ -46,7 +46,7 @@ const DisplayProducts = ({ url }) => {
           SOBREMESAS
         </NavLink>
         <NavLink
-          to={`/${url}/coffees`}
+          to={`/${url}/Coffee-Break`}
           className={({ isActive }) =>
             isActive ? styles.active : styles.navlink
           }
@@ -56,7 +56,7 @@ const DisplayProducts = ({ url }) => {
       </div>
       {url !== "store" && (
         <div>
-          <NavLinkButton to="/store" Text="IR PARA A LOJA " Icon={FaShoppingBag} />
+          <NavLinkButton to="/menu" Text="IR PARA A LOJA " Icon={FaShoppingBag} />
         </div>
       )}
     </div>

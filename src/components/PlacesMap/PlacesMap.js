@@ -1,6 +1,6 @@
 import React from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import styles from "./PlacesMap.module.css";
+
 
 const containerStyle = {
   width: "100",

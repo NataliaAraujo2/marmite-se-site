@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import styles from "./Accompaniments.module.css";
 import { FaCircleMinus, FaCirclePlus } from "react-icons/fa6";
 

@@ -25,7 +25,6 @@ import BrothStore from "./pages/Store/BrothStore";
 import FrozenFoodStore from "./pages/Store/FrozenFoodStore";
 import Checkout from "./pages/Checkout/Checkout";
 import Menu from "./pages/Menu/Menu";
-import Store from "./pages/Store/Store";
 import CloserPlaces from "./pages/Store/Distributors/CloserPlaces";
 import Resume from "./pages/Resume/Resume";
 import Cart from "./pages/Cart/Cart"
@@ -89,16 +88,14 @@ function App() {
               path="/productsType/frozenFoods"
               element={<FrozenFoods />}
             />
-            <Route path="/store/pockets" element={<PocketStore />} />
-            <Route path="/store/desserts" element={<DessertStore />} />
-            <Route path="/store/coffees" element={<CoffeeStore />} />
-            <Route path="/store/broths" element={<BrothStore />} />
-            <Route path="/store/frozenFoods" element={<FrozenFoodStore />} />
+            <Route path="/store/Marmitas" element={<PocketStore />} />
+            <Route path="/store/Sobremesas" element={<DessertStore />} />
+            <Route path="/store/Coffee-Break" element={<CoffeeStore />} />
+            <Route path="/store/Caldos e Sopas" element={<BrothStore />} />
+            <Route path="/store/Congelados" element={<FrozenFoodStore />} />
             <Route path="/menu" element={<Menu />} />
             <Route path="/store/checkout" element={<Checkout />} />
             <Route path="/store/map" element={<CloserPlaces />} />
-            <Route path="/store" element={<Store />} />
-            <Route path="/store/pocket" element={<PocketStore />} />
           </Routes>
         </div>
         <Footer />
