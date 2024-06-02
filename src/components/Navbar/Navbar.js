@@ -22,8 +22,15 @@ import { MdRestaurantMenu } from "react-icons/md";
 import { useAuthentication } from "../../hooks/useAuthentication";
 //context
 import { useAuthValue } from "../../context/AuthContext";
-import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
   const [menuMobile, setMenuMobile] = useState(false);
@@ -32,19 +39,16 @@ const Navbar = () => {
   const { user } = useAuthValue();
   const { logout } = useAuthentication();
   const [qty, setQty] = useState(0);
- 
-  const [documents, setDocuments] =useState([])
- 
 
+  const [documents, setDocuments] = useState([]);
 
   useEffect(() => {
     async function loadData() {
-
       const collectionRef = await collection(db, `Cart ${user.uid}`);
       try {
         let q;
 
-       if (uid) {
+        if (uid) {
           q = await query(
             collectionRef,
             where("uid", "==", uid),
@@ -61,20 +65,16 @@ const Navbar = () => {
             }))
           );
         });
-
-        
       } catch (error) {
         console.log(error);
- 
-        
       }
     }
     if (user) {
       setUid(user.uid);
-      loadData()
+      loadData();
     }
   }, [user, uid]);
-  
+
   useEffect(() => {
     if (documents) {
       //getting the qty from Cart in a separate array
@@ -86,7 +86,7 @@ const Navbar = () => {
       //reducing the qty in a single value
       const reducerOfQty = (acc, currentValue) => acc + currentValue;
       setQty(qtyProducts.reduce(reducerOfQty, 0));
-    } 
+    }
   }, [documents]);
 
   return (
@@ -98,7 +98,9 @@ const Navbar = () => {
             {menuMobile && <MenuMobile active={setMenuMobile} />}
           </div>
           <div className={styles.brand}>
-            <img src={logo} alt="logo" className={styles.brand} />
+            <NavLink to="/">
+              <img src={logo} alt="logo" className={styles.brand} />
+            </NavLink>
           </div>
 
           <div className={styles.links}>
@@ -124,7 +126,7 @@ const Navbar = () => {
           </div>
 
           <div className={styles.link_list}>
-            {user.displayName}
+            <span>{user.displayName}</span>
             <li className={styles.cart}>
               <NavLinkButton
                 Icon={FaShoppingCart}
@@ -151,9 +153,9 @@ const Navbar = () => {
             <FaBars className={styles.faBars} onClick={showMenuMobile} />
             {menuMobile && <MenuMobile active={setMenuMobile} />}
           </div>
-          <div>
+          <NavLink to="/">
             <img src={logo} alt="logo" className={styles.brand} />
-          </div>
+          </NavLink>
 
           <div className={styles.links}>
             <ul>

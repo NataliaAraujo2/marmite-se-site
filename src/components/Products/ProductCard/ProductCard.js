@@ -5,7 +5,6 @@ const ProductCard = ({ addToCart, individualProduct }) => {
   const [price, setPrice] = useState("");
   const [cancelled, setCancelled] = useState(false);
 
-
   useEffect(() => {
     if (cancelled) return;
 
@@ -26,7 +25,6 @@ const ProductCard = ({ addToCart, individualProduct }) => {
     };
   }, [individualProduct, price, cancelled]);
 
-
   const handleAddToCart = () => {
     addToCart(individualProduct);
   };
@@ -36,20 +34,26 @@ const ProductCard = ({ addToCart, individualProduct }) => {
       <div className={styles.image}>
         <img src={individualProduct.url} alt={individualProduct.name} />
       </div>
-      <div className={styles.productDetails}>
+      <div className={styles.details}>
         <span className={styles.name}>{individualProduct.name}</span>
-
-        <label className={styles.description}>
+        <span className={styles.descriptionTitle}>
+          {individualProduct.descriptionTitle}
+        </span>
+        <span className={styles.description}>
           {individualProduct.description}
-        </label>
-        <span className={styles.price}>R${price}</span>
+        </span>
       </div>
-      <div className={styles.button}>
-        <button className={styles.addToCart} onClick={handleAddToCart}>
-          Adicionar ao Carrinho
-        </button>
+      <div className={styles.price}>
+        <span>R${price}</span>
       </div>
-    </div>
+ 
+        <div className={styles.add}>
+          <button className={styles.addToCart} onClick={handleAddToCart}>
+            Adicionar ao Carrinho
+          </button>
+        </div>
+      </div>
+
   );
 };
 

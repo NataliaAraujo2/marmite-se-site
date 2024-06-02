@@ -37,6 +37,10 @@
 
 }
 
+.link_list span{
+  text-align: center;
+}
+
 .links {
  display: initial;
 }

@@ -5,21 +5,48 @@
     flex-direction: column;
 }
 
-.tittle {
-    
+.tittle {   
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: left;
     margin-bottom: 0;
     padding: 0;
-}
-.tittle h3 {
-    width: 100%;
     border-bottom: 1px solid var(--yellow);
 }
 
+.tittle h3{
+    margin-right: 0.5em;
+}
+
+.tittle svg {
+    cursor: pointer;
+}
+
+.accompaniments{
+    width: 99%;
+    border: 1px solid black;
+    margin-bottom: 0.5em;
+}
+
+.classPocket{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.classPocket span { margin-right: 0.5em;}
+
 
 .productsList {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.productsList200{
     display: flex;
     flex-direction: row;
     align-items: center;

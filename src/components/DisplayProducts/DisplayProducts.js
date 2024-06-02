@@ -1,8 +1,6 @@
 import React from "react";
 import styles from "./DisplayProducts.module.css";
-import NavLinkButton from "../../components/Button/NavLinkButton";
 import BackButton from "../../components/Button/BackButton";
-import { FaShoppingBag } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
 const DisplayProducts = ({ url }) => {
@@ -53,12 +51,15 @@ const DisplayProducts = ({ url }) => {
         >
           COFFEE-BREAK
         </NavLink>
+        <NavLink
+          to={`/${url}/Tortas`}
+          className={({ isActive }) =>
+            isActive ? styles.active : styles.navlink
+          }
+        >
+          TORTAS
+        </NavLink>
       </div>
-      {url !== "store" && (
-        <div>
-          <NavLinkButton to="/menu" Text="IR PARA A LOJA " Icon={FaShoppingBag} />
-        </div>
-      )}
     </div>
   );
 };
