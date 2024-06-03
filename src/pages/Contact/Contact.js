@@ -1,47 +1,54 @@
-import React, { useState } from 'react';
-import styles from "./Contact.module.css"
+import React, { useRef } from "react";
+import emailjs from "@emailjs/browser";
+import styles from "./Contact.module.css";
 
 const Contact = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-    });
+  const form = useRef();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
+  const abrirWhatsapp =(e) => {
+    e.preventDefault()
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(formData); // Aqui você pode implementar o envio dos dados para o backend
-    };
+    var url =
+      "https://wa.me/5511993954214";
+    window.open(url, "_blank").focus();
+  }
 
-    return (
-        <div className={styles.contact}>
-            <h1>Entre em Contato</h1>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Nome:
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} />
-                </label>
-                <label>
-                    E-mail:
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} />
-                </label>
-                <label>
-                    Mensagem:
-                    <textarea name="message" value={formData.message} onChange={handleChange} />
-                </label>
-                <button type="submit">Enviar</button>
-            </form>
-        </div>
-    );
-}
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm("service_e6and6l", "template_avpk5ty", form.current, {
+        publicKey: "lJyarKFpuRvaf2koK",
+      })
+      .then(
+        () => {
+          console.log("SUCCESS!");
+        },
+        (error) => {
+          console.log("FAILED...", error.text);
+        }
+      );
+  };
+
+  return (
+    <div className={styles.contact}>
+      <div className={styles.whatsApp}>
+    <button onClick={abrirWhatsapp}>Enviar mensagem por WhatsApp</button>
+      </div>
+      <div className={styles.email}>
+        <h3>Contato por E-mail</h3>
+        <form ref={form} onSubmit={sendEmail}>
+          <label>Name</label>
+          <input type="text" name="name" />
+          <label>Email</label>
+          <input type="email" name="email" />
+          <label>Message</label>
+          <textarea name="message" />
+          <button type="submit">ENVIAR </button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export default Contact;
