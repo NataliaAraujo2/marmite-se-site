@@ -2,31 +2,13 @@ import styles from "./Cart.module.css";
 import { useAuthValue } from "../../context/AuthContext";
 import { useFetchDocuments } from "../../hooks/useFetchDocuments";
 import ProductList from "../../components/Products/ProductList/ProductList";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import StripeCheckout from "react-stripe-checkout";
-
-
-const stripePromise = loadStripe(
-  `${process.env.REACT_APP_STRIPEKEY}`
-);
-
+import NavLinkButton from "../../components/Button/NavLinkButton";
+import { FaPaypal } from "react-icons/fa6";
 
 const Cart = () => {
   //const services
   const { user } = useAuthValue();
   const uid = user.uid;
-  const key = process.env.REACT_APP_STRIPE_KEY;
-  const publicKey = process.env.REACT_APP_STRIPEPUBLICKE
-  const secretKey=process.env.REACT_APP_STRIPEKEY
-
-  console.log(publicKey)
-  console.log(secretKey)
-
-  const options = {
-    // passing the client secret obtained from the server
-    clientSecret: key,
-  };
 
   //constCart
   const { documents: cart } = useFetchDocuments(`Cart ${uid}`);
@@ -42,10 +24,15 @@ const Cart = () => {
   const totalQty = qty.reduce(reducerOfQty, 0);
   // console.log(totalQty)
 
+  const priceReplace = cart.map((cartProduct) => {
+    return cartProduct.totalPrice.replace(',', '.');
+  });
+
   //getting the totalPrice from Cartina a separate array
   const price = cart.map((cartProduct) => {
-    return parseFloat(cartProduct.totalPrice);
+    return parseFloat(priceReplace);
   });
+
 
   //reducing the totalPrice in a single value
   const reducerOfPrice = (acc, currentValue) => acc + currentValue;
@@ -83,9 +70,11 @@ const Cart = () => {
             </h2>
           </div>
           <span>
-            <Elements stripe={stripePromise} options={options}>
-              <StripeCheckout stripeKey={publicKey} token={secretKey}></StripeCheckout>
-            </Elements>
+            <NavLinkButton
+              to="/checkout"
+              Text="Finalizar Compra"
+              Icon={FaPaypal}
+            ></NavLinkButton>
           </span>
         </div>
       </div>

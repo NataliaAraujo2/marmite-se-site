@@ -27,16 +27,18 @@ import Checkout from "./pages/Checkout/Checkout";
 import Menu from "./pages/Menu/Menu";
 import CloserPlaces from "./pages/Store/Distributors/CloserPlaces";
 import Resume from "./pages/Resume/Resume";
-import Cart from "./pages/Cart/Cart"
+import Cart from "./pages/Cart/Cart";
 //components
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Contact from "./pages/Contact/Contact";
 
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 function App() {
   const [user, setUser] = useState(undefined);
   const { auth } = useAuthentication();
+
 
   const loadingUser = user === undefined;
 
@@ -51,59 +53,69 @@ function App() {
   }
   return (
     <div className="App">
-    <AuthProvider value={{ user }}>
-      <BrowserRouter>
-        <Navbar />
-        <div className="container">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/resume/:id" element={<Resume />} />
-            <Route
-              path="/login"
-              element={!user ? <Login /> : <Navigate to="/" />}
-            />
-            <Route
-              path="/register"
-              element={
-                !user ? <Register /> : <Navigate to="/" />
-              }
-            />
-                <Route
-              path="/cart/:id"
-              element={
-                user ? <Cart /> : <Navigate to="/login" />
-              }
-            />
+      <PayPalScriptProvider
+        options={{
+          clientId:
+            process.env.REACT_APP_PAYPAL_CLIENT_ID,
+          currency: "BRL",
+        }}
+      >
+        <AuthProvider value={{ user }}>
+          <BrowserRouter>
+            <Navbar />
 
-            <Route
-              path="/productsType/register"
-              element={!user ? <Register /> : <Navigate to="/" />}
-            />
-            <Route path="/productsType/pockets" element={<Pocket />} />
-            <Route path="/productsType/desserts" element={<Desserts />} />
-            <Route path="/productsType/coffees" element={<Coffee />} />
-            <Route path="/productsType/broths" element={<Broths />} />
-            <Route
-              path="/productsType/frozenFoods"
-              element={<FrozenFoods />}
-            />
-            <Route path="/store/Marmitas" element={<PocketStore />} />
-            <Route path="/store/Sobremesas" element={<DessertStore />} />
-            <Route path="/store/Coffee-Break" element={<CoffeeStore />} />
-            <Route path="/store/Caldos e Sopas" element={<BrothStore />} />
-            <Route path="/store/Congelados" element={<FrozenFoodStore />} />
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/store/checkout" element={<Checkout />} />
-            <Route path="/store/map" element={<CloserPlaces />} />
-          </Routes>
-        </div>
-        <Footer />
-      </BrowserRouter>
-    </AuthProvider>
-  </div>
+            <div className="container">
+              <Routes>
+                <Route
+                  path="/checkout"
+                  element={user ? <Checkout /> : <Login />}
+                />
+
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/resume/:id" element={<Resume />} />
+                <Route
+                  path="/login"
+                  element={!user ? <Login /> : <Navigate to="/" />}
+                />
+                <Route
+                  path="/register"
+                  element={!user ? <Register /> : <Navigate to="/" />}
+                />
+                <Route
+                  path="/cart/:id"
+                  element={user ? <Cart /> : <Navigate to="/login" />}
+                />
+
+                <Route
+                  path="/productsType/register"
+                  element={!user ? <Register /> : <Navigate to="/" />}
+                />
+                <Route path="/productsType/pockets" element={<Pocket />} />
+                <Route path="/productsType/desserts" element={<Desserts />} />
+                <Route path="/productsType/coffees" element={<Coffee />} />
+                <Route path="/productsType/broths" element={<Broths />} />
+                <Route
+                  path="/productsType/frozenFoods"
+                  element={<FrozenFoods />}
+                />
+                <Route path="/store/Marmitas" element={<PocketStore />} />
+                <Route path="/store/Sobremesas" element={<DessertStore />} />
+                <Route path="/store/Coffee-Break" element={<CoffeeStore />} />
+                <Route path="/store/Caldos e Sopas" element={<BrothStore />} />
+                <Route path="/store/Congelados" element={<FrozenFoodStore />} />
+                <Route path="/menu" element={<Menu />} />
+                <Route path="/store/checkout" element={<Checkout />} />
+                <Route path="/store/map" element={<CloserPlaces />} />
+              </Routes>
+            </div>
+            <Footer />
+          </BrowserRouter>
+        </AuthProvider>
+      </PayPalScriptProvider>
+    </div>
   );
 }
 

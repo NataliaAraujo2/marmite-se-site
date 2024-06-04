@@ -1,191 +1,98 @@
-import React, { useRef, useState } from "react";
 //css
 import styles from "./Checkout.module.css";
 import ProductList from "../../components/Products/ProductList/ProductList";
-import imageDefault from "../../images/logo.png";
+import { useFetchDocuments } from "../../hooks/useFetchDocuments";
+import { useAuthValue } from "../../context/AuthContext";
+import PayPalCheckoutButtons from "../../components/PaypalCheckoutButtons/PayPalCheckoutButtons";
+import { useState } from "react";
 
 const Checkout = () => {
-  //const form
-  const [zipCode, setZipCode] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [address, setAddress] = useState("");
-  const [homeNumber, setHomeNumber] = useState("");
-  const [addressComplement, setAddressComplement] = useState("");
-  const [district, setDistrict] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardExpiryDate, setCardExpiryDate] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [cardHolderName, setCardHolderName] = useState("");
-  const [document, setDocument] = useState("");
-  //const Ref
-  const zipCodeRef = useRef();
-  const stateRef = useRef();
-  const cityRef = useRef();
-  const addressRef = useRef();
-  const homeNumberRef = useRef();
-  const addressComplementRef = useRef();
-  const districtRef = useRef();
-  const cardNumberRef = useRef();
-  const cardExpiryDateRef = useRef();
-  const cvvRef = useRef();
-  const cardHolderNameRef = useRef();
-  const documentRef = useRef();
-  //const State
-  const [image] = useState(imageDefault);
+  //const hooks
+  const { user } = useAuthValue();
+  const { documents: cartProducts } = useFetchDocuments(`Cart ${user.uid}`);
+const [total, setTotal] = useState(0)
+  
+
+  //const payment
+  const product = {
+    description: "Designer",
+    price: 19.5,
+  };
+
+  const priceReplace = cartProducts.map((cartProduct) => {
+    return cartProduct.totalPrice.replace(',', '.');
+  });
+
+  //getting the totalPrice from Cartina a separate array
+  const price = cartProducts.map((cartProduct) => {
+    return parseFloat(priceReplace);
+  });
+
+  //reducing the totalPrice in a single value
+  const reducerOfPrice = (acc, currentValue) => acc + currentValue;
+  const totalCartPrice = price.reduce(reducerOfPrice, 0);
+  const totalCartPriceStringParcial = totalCartPrice.toLocaleString("pt-br", {
+    minimumFractionDigits: 2,
+  });
+ 
+  const frete = totalCartPrice * 0.05;
+  const freteString = frete.toLocaleString("pt-br", {
+    minimumFractionDigits: 2,
+  });
+
+
+  if(frete > 0.009) {
+    const totalCalc = frete + totalCartPrice;
+    setTotal(totalCalc)
+  } else {
+    setTotal(totalCartPrice)
+  }
+
+ 
+  const totalCartPriceString = total.toLocaleString("pt-br", {
+    minimumFractionDigits: 2,
+  });
+
+  //getting the qty from Cart in a separate array
+  const qty = cartProducts.map((cartProduct) => {
+    return cartProduct.qty;
+  });
+  // console.log(qty);
+
+  //reducing the qty in a single value
+  const reducerOfQty = (acc, currentValue) => acc + currentValue;
+  const totalQty = qty.reduce(reducerOfQty, 0);
+
+  // console.log(totalQty)
 
   return (
     <div className={styles.checkout}>
       <div className={styles.deliveryForm}>
-        <h3>Dados de Entrega</h3>
-        <form action="">
-          <label>
-            <input
-              type="text"
-              name="zipCode"
-              ref={zipCodeRef}
-              placeholder="CEP"
-              value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
-            ></input>
-          </label>
-          <label className={styles.row}>
-            <input
-              className={styles.smallField}
-              type="text"
-              name="state"
-              ref={stateRef}
-              placeholder="Estado"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            ></input>
-
-            <input
-              className={styles.mediumField}
-              type="text"
-              name="city"
-              ref={cityRef}
-              placeholder="Cidade"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            ></input>
-          </label>
-          <label>
-            <input
-              type="text"
-              name="address"
-              ref={addressRef}
-              placeholder="Endereço"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            ></input>
-          </label>
-          <label className={styles.row}>
-            <input
-              className={styles.smallField}
-              type="text"
-              name="homeNumber"
-              ref={homeNumberRef}
-              placeholder="Número"
-              value={homeNumber}
-              onChange={(e) => setHomeNumber(e.target.value)}
-            ></input>
-
-            <input
-              className={styles.mediumField}
-              type="text"
-              name="addressComplement"
-              ref={addressComplementRef}
-              placeholder="Complemento"
-              value={addressComplement}
-              onChange={(e) => setAddressComplement(e.target.value)}
-            ></input>
-          </label>
-          <label>
-            <input
-              type="text"
-              name="district"
-              ref={districtRef}
-              placeholder="Bairro"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-            ></input>
-          </label>
-        </form>
-        <h3>Dados de Pagamento</h3>
-        <form action="">
-          <label>
-            <input
-              type="text"
-              name="cardNumber"
-              ref={cardNumberRef}
-              placeholder="Número do Cartão"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-            ></input>
-          </label>
-          <label className={styles.row}>
-            <input
-              className={styles.smallField}
-              type="text"
-              name="cardExpiryDate"
-              ref={cardExpiryDateRef}
-              placeholder="Validade"
-              value={cardExpiryDate}
-              onChange={(e) => setCardExpiryDate(e.target.value)}
-            ></input>
-
-            <input
-              className={styles.mediumField}
-              type="text"
-              name="cvv"
-              ref={cvvRef}
-              placeholder="CVV"
-              value={cvv}
-              onChange={(e) => setCvv(e.target.value)}
-            ></input>
-          </label>
-          <label className={styles.row}>
-            <input
-              className={styles.smallField}
-              type="text"
-              name="cardHolderName"
-              ref={cardHolderNameRef}
-              placeholder="Nome do Titular do Cartão"
-              value={cardHolderName}
-              onChange={(e) => setCardHolderName(e.target.value)}
-            ></input>
-
-            <input
-              className={styles.mediumField}
-              type="text"
-              name="document"
-              ref={documentRef}
-              placeholder="CPF/CNPJ do titular"
-              value={document}
-              onChange={(e) => setDocument(e.target.value)}
-            ></input>
-          </label>
-          <label className={styles.rowTotal}>
-            <span>Total</span>
-            <span className={styles.total}>R$ 150,00</span>
-          </label>
-          <button>Finalizar Compra</button>
-        </form>
+        <h3>Resumo para Pagamento</h3>
+          <h5>Total de Produtos no Carrinho: {totalQty}</h5>
+          <h5>Valor do Frete R${freteString}</h5>
+          <h5>Valor Total dos Produtos R${totalCartPriceStringParcial}</h5>
+          <h5>Valor Total para Pagamento R${totalCartPriceString}</h5>
+  
+          <PayPalCheckoutButtons product={product} />
+ 
       </div>
+
       <div className={styles.shoppingCart}>
-        <h3>Minha Sacola</h3>
+        <h3>
+          Minha Sacola 
+        </h3>
         <div className={styles.productsList}>
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((p) => (
-            <div key={p}>
-              <ProductList
-                src={image}
-                name="Nome do Produto"
-                price="15,00"
-                button={true}
-              />
-            </div>
-          ))}
+          {cartProducts &&
+            cartProducts.map((cartIndividualProduct) => (
+              <div key={cartIndividualProduct.id}>
+                <ProductList
+                  cartProduct={cartIndividualProduct}
+                  button={false}
+                  key={cartIndividualProduct.id}
+                />
+              </div>
+            ))}
         </div>
       </div>
     </div>
